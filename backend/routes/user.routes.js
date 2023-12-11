@@ -1,7 +1,8 @@
-import express from "express";
-import userController from "../controllers/user.controller.js";
+import express from 'express'
+import userController from '../controllers/user.controller.js'
+import protectRoute from '../middleware/authorization.js'
 
-const router = express.Router();
+const router = express.Router()
 
 /**
  * @swagger
@@ -23,7 +24,7 @@ const router = express.Router();
  *           application/json:
  *             example: { message: "Get All Users Success", users: [] }
  */
-router.get("/", userController.getUser);
+router.get('/', protectRoute, userController.getUser)
 
 /**
  * @swagger
@@ -50,7 +51,7 @@ router.get("/", userController.getUser);
  *           application/json:
  *             example: { message: "Failed Get User", detail: "Error message" }
  */
-router.get("/:id", userController.getUserById);
+router.get('/:id', userController.getUserById)
 
 /**
  * @swagger
@@ -80,7 +81,7 @@ router.get("/:id", userController.getUserById);
  *           application/json:
  *             example: { message: "User Not Found" }
  */
-router.post("/login", userController.loginUser);
+router.post('/login', userController.loginUser)
 
 /**
  * @swagger
@@ -105,7 +106,7 @@ router.post("/login", userController.loginUser);
  *           application/json:
  *             example: { message: "Failed Register User", detail: "Error message" }
  */
-router.post("/", userController.registerUser);
+router.post('/register', userController.registerUser)
 
 /**
  * @swagger
@@ -137,7 +138,7 @@ router.post("/", userController.registerUser);
  *           application/json:
  *             example: { message: "Failed Update User", detail: "Error message" }
  */
-router.patch("/:id", userController.updateUser);
+router.patch('/:id', userController.updateUser)
 
 /**
  * @swagger
@@ -164,6 +165,8 @@ router.patch("/:id", userController.updateUser);
  *           application/json:
  *             example: { message: "Failed Delete User", detail: "Error message" }
  */
-router.delete("/:id", userController.deleteUser);
+router.delete('/:id', userController.deleteUser)
 
-export default router;
+router.post('/logout', userController.logoutUser)
+
+export default router
