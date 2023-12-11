@@ -1,0 +1,55 @@
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+.userInfo img {
+  border-radius: 50%;
+  width: 50px;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 6px 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.downloadBtn {
+  padding: 6px 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* // Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+  img.popupImage {
+    width: 660px;
+    height: 615px;
+    object-fit: contain;
+  }
+
+  .popup {
+    width: 1000px;
+    height: 636px;
+  }
+
+  .userInfo {
+    top: 10px;
+    left: 10px;
+  }
+
+  .downloadImage {
+    top: 10px;
+    right: 10px;
+  }
+  img.popupImage {
+    margin-top: 0px;
+  }
+}
