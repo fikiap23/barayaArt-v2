@@ -13,7 +13,7 @@ const router = express.Router()
 
 /**
  * @swagger
- * /api/auth:
+ * /api/users:
  *   get:
  *     summary: Get all users
  *     tags: [User]
@@ -28,7 +28,7 @@ router.get('/', protectRoute, userController.getUser)
 
 /**
  * @swagger
- * /api/auth/{id}:
+ * /api/users/{id}:
  *   get:
  *     summary: Get a user by ID
  *     tags: [Users]
@@ -51,11 +51,11 @@ router.get('/', protectRoute, userController.getUser)
  *           application/json:
  *             example: { message: "Failed Get User", detail: "Error message" }
  */
-router.get('/:id', userController.getUserById)
+router.get('/:query', userController.getUserProfile)
 
 /**
  * @swagger
- * /api/auth/login:
+ * /api/users/login:
  *   post:
  *     summary: Login user
  *     tags: [Users]
@@ -85,7 +85,7 @@ router.post('/login', userController.loginUser)
 
 /**
  * @swagger
- * /api/auth:
+ * /api/users:
  *   post:
  *     summary: Register a new user
  *     tags: [Users]
@@ -110,8 +110,8 @@ router.post('/register', userController.registerUser)
 
 /**
  * @swagger
- * /api/auth/{id}:
- *   patch:
+ * /api/users/{id}:
+ *   put:
  *     summary: Update user by ID
  *     tags: [Users]
  *     parameters:
@@ -138,11 +138,11 @@ router.post('/register', userController.registerUser)
  *           application/json:
  *             example: { message: "Failed Update User", detail: "Error message" }
  */
-router.patch('/:id', userController.updateUser)
+router.put('/:id', protectRoute, userController.updateUser)
 
 /**
  * @swagger
- * /api/auth/{id}:
+ * /api/users/{id}:
  *   delete:
  *     summary: Delete user by ID
  *     tags: [Users]
@@ -165,8 +165,10 @@ router.patch('/:id', userController.updateUser)
  *           application/json:
  *             example: { message: "Failed Delete User", detail: "Error message" }
  */
-router.delete('/:id', userController.deleteUser)
+// router.delete('/:id', userController.deleteUser)
 
 router.post('/logout', userController.logoutUser)
+
+router.post('/follow/:id', protectRoute, userController.followUnFollowUser) // Toggle state(follow/unfollow)
 
 export default router
