@@ -1,7 +1,8 @@
-import express from "express";
-import postController from "../controllers/post.controller.js";
+import express from 'express'
+import postController from '../controllers/post.controller.js'
+import protectRoute from '../middleware/authorization.js'
 
-const router = express.Router();
+const router = express.Router()
 
 /**
  * @swagger
@@ -23,7 +24,10 @@ const router = express.Router();
  *           application/json:
  *             example: { message: "Get All Posts Success", posts: [] }
  */
-router.get("/", postController.getPost);
+router.get('/', postController.getPost)
+
+// get feed
+router.get('/feed', protectRoute, postController.getFeedPosts)
 
 /**
  * @swagger
@@ -50,7 +54,7 @@ router.get("/", postController.getPost);
  *           application/json:
  *             example: { message: "Failed Get Post", detail: "Error message" }
  */
-router.get("/:id", postController.getPostById);
+router.get('/:id', postController.getPostById)
 
 /**
  * @swagger
@@ -75,7 +79,7 @@ router.get("/:id", postController.getPostById);
  *           application/json:
  *             example: { message: "Failed Create Post", detail: "Error message" }
  */
-router.post("/", postController.createPost);
+router.post('/', protectRoute, postController.createPost)
 
 /**
  * @swagger
@@ -107,7 +111,7 @@ router.post("/", postController.createPost);
  *           application/json:
  *             example: { message: "Failed Update Post", detail: "Error message" }
  */
-router.patch("/:id", postController.updatePost);
+router.put('/:id', protectRoute, postController.updatePost)
 
 /**
  * @swagger
@@ -134,6 +138,6 @@ router.patch("/:id", postController.updatePost);
  *           application/json:
  *             example: { message: "Failed Delete Post", detail: "Error message" }
  */
-router.delete("/:id", postController.deletePost);
+router.delete('/:id', protectRoute, postController.deletePost)
 
-export default router;
+export default router
