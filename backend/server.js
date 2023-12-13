@@ -10,7 +10,6 @@ import {
   swaggerSpecChat,
 } from './swagger/fileSwagger.js'
 import userRoutes from './routes/user.routes.js'
-import chatRoutes from './routes/chat.routes.js'
 import postRoutes from './routes/post.routes.js'
 import commentRoutes from './routes/comment.routes.js'
 import dotenv from 'dotenv'
@@ -50,7 +49,6 @@ app.use('/api-docs/auth', swaggerUi.serve, swaggerUi.setup(swaggerSpecUser))
 
 app.use(express.json())
 app.use('/api/users', userRoutes)
-app.use('/api/chats', chatRoutes)
 app.use('/api/posts', postRoutes)
 app.use('/api/comments', commentRoutes)
 
