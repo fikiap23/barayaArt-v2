@@ -1,24 +1,24 @@
-import express from "express";
-import jwt from "jsonwebtoken";
+import User from '../models/user.model.js'
+import jwt from 'jsonwebtoken'
 
-const verifyToken = (req, res, next) => {
-  // Cek apakah request memiliki token JWT
-  const token = req.headers["Authorization"].split(" ")[1];
-  if (!token) {
-    // Jika tidak ada token, tolak permintaan
-    return res.status(401).send({ message: "Unauthorized" });
-  }
-
-  // Cek apakah token valid
+const protectRoute = async (req, res, next) => {
   try {
-    // Jika token valid, lanjutkan permintaan
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (err) {
-    // Jika token tidak valid, tolak permintaan
-    return res.status(401).send({ message: "Unauthorized" });
-  }
-};
+    const token = req.cookies.jwt
+    console.log(token)
 
-export default verifyToken;
+    if (!token) return res.status(401).json({ message: 'Unauthorized' })
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+
+    const user = await User.findById(decoded.userId).select('-password')
+
+    req.user = user
+
+    next()
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+    console.log('Error in protectRoute: ', err.message)
+  }
+}
+
+export default protectRoute
