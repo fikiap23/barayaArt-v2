@@ -7,6 +7,7 @@ import logoImage from '../../assets/logo.png'
 import { IoMenu } from 'react-icons/io5'
 import { useRecoilValue } from 'recoil'
 import userAtom from '../../atoms/userAtom'
+import CreatePost from '../Reactions/CreatePost'
 const Header = ({ fetchReq }) => {
   const [search, setSearch] = useState('')
   const [activeItem, setActiveItem] = useState(0)
@@ -56,7 +57,7 @@ const Header = ({ fetchReq }) => {
           </div>
           <div className="items-center user md:flex align-center hidden">
             {user ? (
-              <button>Submit a photo</button>
+              <CreatePost></CreatePost>
             ) : (
               <Link to="/register">
                 <button>Register</button>
