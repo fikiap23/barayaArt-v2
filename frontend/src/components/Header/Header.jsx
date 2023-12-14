@@ -63,7 +63,7 @@ const Header = ({ fetchReq }) => {
               </Link>
             )}
             {user && (
-              <Link to="/u/user">
+              <Link to={`/u/${user.username}`}>
                 {' '}
                 <FaUserCircle className="text-[35px] text-[#bebebe] ml-[20px]" />
               </Link>

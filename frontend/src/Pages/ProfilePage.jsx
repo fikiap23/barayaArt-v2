@@ -5,6 +5,7 @@ import Header from '../components/Header/Header'
 import PhotoGallery from '../components/PhotoGallery/PhotoGallery'
 import Popup from '../components/Popup/Popup'
 import bg from '../assets/bg.jpeg'
+import noProfile from '../assets/profile.png'
 
 const ProfilePage = () => {
   const [photos, setPhotos] = useState([])
@@ -13,16 +14,14 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(false)
 
   const { username } = useParams()
-  const [usernameData, setUsernameData] = useState({})
+  const [userData, setuserData] = useState({})
 
   useEffect(() => {
     const fetchUser = async () => {
-      const response = await fetch(
-        `https://api.unsplash.com/users/${username}?client_id=7rZCr4g4T9pmpdZ9Chw8B60qfv6PotjqGkXE6uMAUyM`
-      )
+      const response = await fetch(`/api/users/${username}`)
       const data = await response.json()
 
-      setUsernameData(data)
+      setuserData(data)
     }
 
     const fetchMoreData = async () => {
@@ -68,19 +67,27 @@ const ProfilePage = () => {
         }}
       >
         <div className="flex items-center gap-5 relative top-[80px] left-0  md:top-[180px] md:left-[130px] w-fit text-white font-medium">
-          <div className="w-[80px] h-[80px] md:w-[140px] md:h-[140px] overflow-hidden bg-[#686868] rounded-full shadow-xl shadow-black">
+          <div className="w-[80px] h-[80px] md:w-[140px] md:h-[140px] bg-white overflow-hidden  rounded-full shadow-xl shadow-black">
             <img
-              src={usernameData?.profile_image?.large}
+              src={userData?.profilePic || noProfile}
               alt="avatar"
               className="w-full h-full object-cover"
             />
           </div>
           <div>
-            <h1 className="text-xl md:text-3xl">{usernameData?.name}</h1>
-            <div className="flex  gap-2 md:gap-4 lg:gap-8">
-              <p>@{usernameData?.username}</p>
-              <p>{usernameData?.followers_count} Followers</p>
-              <p>{usernameData?.following_count} Following</p>
+            <h1 className="text-xl md:text-3xl">{userData?.name}</h1>
+            <div className="flex gap-2 md:gap-4 lg:gap-8">
+              <p>@{userData?.username}</p>
+              <p>
+                {userData.followers
+                  ? `${userData.followers.length} followers`
+                  : 'Loading followers...'}{' '}
+              </p>
+              <p>
+                {userData.following
+                  ? `${userData.following.length} following`
+                  : 'Loading following...'}{' '}
+              </p>
             </div>
           </div>
         </div>
