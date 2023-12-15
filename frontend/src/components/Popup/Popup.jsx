@@ -12,12 +12,12 @@ const Popup = ({ handlePopup, handleHide }) => {
 
   return (
     <div>
-      {handlePopup?.id && (
+      {handlePopup?._id && (
         <div className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-full h-full bg-white p-[10px] m-auto flex flex-col items-center rounded-[4px] z-10 overflow-auto  ">
           <div>
             <img
               className=" w-[400px] h-[500px] object-contain"
-              src={handlePopup?.urls?.regular}
+              src={handlePopup?.image}
               alt={handlePopup?.description}
             />
           </div>
@@ -30,12 +30,16 @@ const Popup = ({ handlePopup, handleHide }) => {
               X
             </button>
           </div>
-          <Link to={`/u/${handlePopup?.user?.username}`}>
+          <Link to={`/u/${handlePopup?.postedBy.username}`}>
             <div className="userInfo">
-              <img src={handlePopup?.user?.profile_image?.medium} alt="user" />
+              <img
+                src={handlePopup?.postedBy.profilePic}
+                alt="user"
+                className="w-12 h-12 rounded-full"
+              />
               <div>
-                <b>{handlePopup?.user?.name}</b>
-                <p>{handlePopup?.user?.username}</p>
+                <b>{handlePopup?.postedBy.name}</b>
+                <p>{handlePopup?.postedBy.username}</p>
               </div>
             </div>
           </Link>
@@ -45,17 +49,15 @@ const Popup = ({ handlePopup, handleHide }) => {
                 className="downloadButton"
                 title="close"
                 onClick={() =>
-                  downloadImage(
-                    handlePopup?.urls?.regular,
-                    handlePopup?.description
-                  )
+                  downloadImage(handlePopup?.image, handlePopup?.description)
                 }
               >
                 Download
               </button>
             </div>
             <p className="text-gray-700">
-              <span className="font-bold">Likes:</span> {handlePopup?.likes}
+              <span className="font-bold">Likes:</span>{' '}
+              {handlePopup?.likes.length}
             </p>
             <p className="text-gray-700">
               <span className="font-bold">Description:</span>{' '}

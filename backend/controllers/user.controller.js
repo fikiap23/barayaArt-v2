@@ -79,6 +79,8 @@ const userController = {
         username,
         password: hashPass,
         name,
+        profilePic:
+          'https://images.unsplash.com/photo-1511367461989-f85a21fda167?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MTc4MTl8MHwxfHNlYXJjaHwxfHxwcm9maWxlfGVufDB8fHx8MTcwMjU5OTQzN3ww&ixlib=rb-4.0.3&q=80&w=1080',
       })
       const savedUser = await newUser.save()
       if (!savedUser) {

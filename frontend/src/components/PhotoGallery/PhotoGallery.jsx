@@ -13,6 +13,8 @@ const PhotoGallery = ({ photos, handlePopup }) => {
     saveAs(image_url, image_name) // Put your image URL here.
   }
 
+  console.log(photos)
+
   return (
     <ResponsiveMasonry columnsCountBreakPoints={{ 0: 1, 576: 2, 768: 3 }}>
       <Masonry gutter="10px">
@@ -20,21 +22,21 @@ const PhotoGallery = ({ photos, handlePopup }) => {
           <>
             {/* {console.log(photo)} */}
             <div className="md:hidden flex justify-between items-center px-3">
-              <Link to={`/u/${photo?.user?.username}`}>
+              <Link to={`/u/${photo?.postedBy?.username}`}>
                 <div className="flex items-center gap-3">
                   <img
-                    src={photo?.user?.profile_image?.small}
-                    alt="avatar"
+                    src={photo?.postedBy?.profilePic}
+                    alt={photo?.postedBy?.profilePic}
                     className="w-10 h-10 rounded-full"
                   />
-                  <p className="text-black ">{photo?.user?.name}</p>
+                  <p className="text-black ">{photo?.postedBy?.name}</p>
                 </div>
               </Link>
               <FiMoreHorizontal className="text-black text-2xl" />
             </div>
 
             <div
-              key={photo?.id}
+              key={photo?.image_public_id}
               className={`relative transition-opacity duration-300 ease-in-out ${
                 hoveredPhoto === photo ? 'opacity-80' : 'opacity-100'
               }`}
@@ -42,10 +44,10 @@ const PhotoGallery = ({ photos, handlePopup }) => {
               onMouseLeave={() => setHoveredPhoto(null)}
             >
               <img
-                id={photo?.id}
+                id={photo?.image_public_id}
                 onClick={handlePopup}
                 className="rounded-lg"
-                src={photo?.urls?.regular}
+                src={photo?.image}
                 alt={photo?.description}
                 loading="lazy"
               />
@@ -53,15 +55,15 @@ const PhotoGallery = ({ photos, handlePopup }) => {
                 <div className="hidden md:block absolute bottom-5 left-5 items-center w-full  ">
                   {/* avatar */}
                   <div className="flex items-center justify-between ">
-                    <Link to={`/u/${photo?.user?.username}`}>
+                    <Link to={`/u/${photo?.postedBy?.username}`}>
                       <div className="flex items-center gap-3 ">
                         <img
-                          src={photo?.user?.profile_image?.small}
+                          src={photo?.postedBy?.profilePic}
                           alt="avatar"
                           className="w-10 h-10 rounded-full"
                         />
                         <p className="text-white font-bold">
-                          {photo?.user?.name}
+                          {photo?.postedBy?.name}
                         </p>
                       </div>
                     </Link>
@@ -69,10 +71,7 @@ const PhotoGallery = ({ photos, handlePopup }) => {
                       <GoDownload
                         className="text-black text-3xl"
                         onClick={() =>
-                          downloadImage(
-                            photo?.urls?.regular,
-                            photo?.description
-                          )
+                          downloadImage(photo?.image, photo?.description)
                         }
                       />
                     </div>

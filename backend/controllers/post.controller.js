@@ -5,7 +5,7 @@ import { uploadImage, deleteImage } from '../utils/uploadImage.js'
 const postController = {
   getPost: async (req, res) => {
     try {
-      const posts = await Post.find()
+      const posts = await Post.find().populate('postedBy', '-password') // Exclude the password field
       res.json({ message: 'Get All Posts Success', posts })
     } catch (error) {
       res
@@ -13,6 +13,7 @@ const postController = {
         .json({ message: 'Failed Get All Posts', detail: error.message })
     }
   },
+
   getPostById: async (req, res) => {
     try {
       const post = await Post.findById(req.params.id)
