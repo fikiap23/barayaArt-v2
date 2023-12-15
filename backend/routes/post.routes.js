@@ -56,6 +56,9 @@ router.get('/feed', protectRoute, postController.getFeedPosts)
  */
 router.get('/:id', postController.getPostById)
 
+// get post by user
+router.get('/user/userIdOrUsername', postController.getPostByUserIdOrUsername)
+
 /**
  * @swagger
  * /posts:

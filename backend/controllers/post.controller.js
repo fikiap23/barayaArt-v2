@@ -29,6 +29,31 @@ const postController = {
     }
   },
 
+  getPostByUserIdOrUsername: async (req, res) => {
+    try {
+      // Ekstrak userId atau username dari parameter permintaan
+      const { userIdOrUsername } = req.params
+
+      // Temukan pengguna berdasarkan apakah userIdOrUsername adalah ID atau username
+      const user = await User.findOne({
+        $or: [{ _id: userIdOrUsername }, { username: userIdOrUsername }],
+      })
+
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' })
+      }
+
+      // Dapatkan postingan untuk pengguna yang ditemukan
+      const posts = await Post.find({ postedBy: user._id }).sort({
+        createdAt: -1,
+      })
+
+      res.status(200).json({ message: 'Get Posts by User Success', posts })
+    } catch (error) {
+      res.status(500).json({ error: error.message })
+    }
+  },
+
   getFeedPosts: async (req, res) => {
     try {
       const userId = req.user._id
