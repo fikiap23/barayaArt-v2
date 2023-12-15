@@ -2,10 +2,11 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Header from '../components/Header/Header'
-import PhotoGallery from '../components/PhotoGallery/PhotoGallery'
-import Popup from '../components/Popup/Popup'
+
 import bg from '../assets/bg.jpeg'
 import noProfile from '../assets/profile.png'
+import PhotoGalleryProfile from '../components/PhotoGallery/PhotoGalleryProfile'
+import PopupImgProfile from '../components/Popup/PopupImgProfile'
 
 const ProfilePage = () => {
   const [photos, setPhotos] = useState([])
@@ -17,23 +18,15 @@ const ProfilePage = () => {
   const [userData, setuserData] = useState({})
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const response = await fetch(`/api/users/${username}`)
-      const data = await response.json()
-
-      setuserData(data)
-    }
-
-    const fetchMoreData = async () => {
-      setLoading(true)
-
+    const fetchPostByUser = async () => {
       try {
-        const url = `https://api.unsplash.com/users/${username}/photos?&per_page=100&client_id=7rZCr4g4T9pmpdZ9Chw8B60qfv6PotjqGkXE6uMAUyM`
+        setLoading(true)
+        const url = `/api/posts/user/${username}`
         const response = await fetch(url)
         const newData = await response.json()
-        // console.log(newData)
-
-        setPhotos(newData)
+        setuserData(newData.userData)
+        setPhotos(newData.postData)
+        setLoading(false)
       } catch (error) {
         console.error('Error fetching more data', error)
       } finally {
@@ -41,13 +34,15 @@ const ProfilePage = () => {
       }
     }
 
-    fetchUser()
-    fetchMoreData()
+    fetchPostByUser()
   }, [username])
 
   const handlePopup = (event) => {
     let id = event?.target?.getAttribute('id')
-    let popupPhotos = photos?.filter((photo) => photo?.id === id)
+    console.log('Id', id)
+
+    let popupPhotos = photos?.filter((photo) => photo?.image_public_id === id)
+    // console.log('popupPhotos', popupPhotos[0])
     setPopupArry(popupPhotos[0])
     setToggle(true)
   }
@@ -277,11 +272,15 @@ const ProfilePage = () => {
       {/* Tabs End */}
 
       {/* Use the Gallery component */}
-      <PhotoGallery photos={photos} handlePopup={handlePopup} />
+      <PhotoGalleryProfile
+        photos={photos}
+        handlePopup={handlePopup}
+        userData={userData}
+      />
       {loading && <p>Loading...</p>}
       {toggle && (
         <div onClick={handleHide} className="popudp">
-          <Popup handlePopup={popupArry} />
+          <PopupImgProfile handlePopup={popupArry} userData={userData} />
         </div>
       )}
     </>
