@@ -8,7 +8,7 @@ const router = express.Router()
 router.post('/:postId', protectRoute, commentController.commentToPost)
 
 // Get comments by post
-router.get('/:postId', protectRoute, commentController.getCommentsByPost)
+router.get('/:postId', commentController.getCommentsByPost)
 
 // Update a comment
 router.put('/:commentId', protectRoute, commentController.updateComment)

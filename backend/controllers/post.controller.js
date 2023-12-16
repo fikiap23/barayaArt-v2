@@ -1,11 +1,12 @@
 import Post from '../models/post.model.js'
 import User from '../models/user.model.js'
 import { uploadImage, deleteImage } from '../utils/uploadImage.js'
+import mongoose from 'mongoose'
 
 const postController = {
   getPost: async (req, res) => {
     try {
-      const posts = await Post.find()
+      const posts = await Post.find().populate('postedBy', '-password') // Exclude the password field
       res.json({ message: 'Get All Posts Success', posts })
     } catch (error) {
       res
@@ -13,6 +14,7 @@ const postController = {
         .json({ message: 'Failed Get All Posts', detail: error.message })
     }
   },
+
   getPostById: async (req, res) => {
     try {
       const post = await Post.findById(req.params.id)
@@ -25,6 +27,60 @@ const postController = {
       res
         .status(400)
         .json({ message: 'Failed Get Post', detail: error.message })
+    }
+  },
+
+  getPostByUserIdOrUsername: async (req, res) => {
+    try {
+      const { userIdOrUsername } = req.params
+
+      // Validate userIdOrUsername
+      if (!userIdOrUsername) {
+        return res
+          .status(400)
+          .json({ error: 'userIdOrUsername parameter is required' })
+      }
+
+      let user
+      if (mongoose.Types.ObjectId.isValid(userIdOrUsername)) {
+        // If it's a valid ObjectId, search by _id
+        user = await User.findById(userIdOrUsername)
+      } else {
+        // Assume it's a username and search by username
+        user = await User.findOne({ username: userIdOrUsername })
+      }
+
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' })
+      }
+
+      // Use aggregate to get posts by user and unwind the postedBy field
+      const posts = await Post.aggregate([
+        { $match: { postedBy: user._id } },
+        { $sort: { createdAt: -1 } },
+      ])
+
+      // Format the userData
+      const userData = {
+        _id: user._id,
+        email: user.email,
+        username: user.username,
+        name: user.name,
+        profilePic: user.profilePic,
+        followers: user.followers,
+        following: user.following,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      }
+
+      res.status(200).json({
+        message: 'Get Posts by User Success',
+        userData,
+        postData: posts,
+      })
+    } catch (error) {
+      console.error('Error in getPostByUserIdOrUsername:', error)
+      res.status(500).json({ error: 'Internal Server Error' })
     }
   },
 

@@ -44,7 +44,12 @@ const commentController = {
         return res.status(404).json({ error: 'Post not found' })
       }
 
-      const comments = await Comment.find({ postId })
+      // Menggunakan populate untuk menggabungkan data pengguna yang memberikan komentar
+      const comments = await Comment.find({ postId }).populate('commentedBy', [
+        '_id',
+        'name',
+        'profilePic',
+      ]) // Ganti dengan properti pengguna yang ingin ditampilkan
 
       res.status(200).json({ comments })
     } catch (err) {

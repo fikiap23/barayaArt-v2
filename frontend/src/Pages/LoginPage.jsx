@@ -1,6 +1,60 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import logoImage from '../assets/logo.png'
 const LoginPage = () => {
+  const [formData, setFormData] = useState({
+    identifier: '',
+    password: '',
+  })
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === 'checkbox' ? checked : value,
+    }))
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    // Sekarang, 'formData' berisi data dari formulir yang dapat Anda kirim ke backend atau melakukan operasi lainnya.
+    console.log('Form Data:', formData)
+
+    // Mengirimkan data 'formData' ke backend
+    loginUser(formData)
+      .then((data) => {
+        console.log('Login successful:', data.user)
+        localStorage.setItem('user-baraya', JSON.stringify(data.user))
+        window.location.href = '/'
+      })
+      .catch((error) => {
+        console.error('Login failed:', error.message)
+      })
+  }
+  const loginUser = async (userData) => {
+    try {
+      const response = await fetch('/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to login user')
+      }
+
+      const responseData = await response.json()
+      // responseData berisi data yang dikirimkan oleh server, seperti pesan sukses atau pengguna yang didaftarkan
+
+      return responseData
+    } catch (error) {
+      console.error('Login error:', error.message)
+      throw error
+    }
+  }
   return (
     <section
       className="bg-gray-50 dark:bg-gray-900"
@@ -23,21 +77,21 @@ const LoginPage = () => {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Login to your account
             </h1>
-            <form className="space-y-4 md:space-y-6" action="#">
+            <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label
-                  htmlFor="username"
+                  htmlFor="identifier"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
                   Username or Email
                 </label>
                 <input
                   type="text"
-                  name="username"
-                  id="username"
+                  name="identifier"
+                  id="identifier"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="enter your username or email"
-                  required=""
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -53,7 +107,7 @@ const LoginPage = () => {
                   id="password"
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  required=""
+                  onChange={handleChange}
                 />
               </div>
 

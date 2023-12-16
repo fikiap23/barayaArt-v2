@@ -44,18 +44,22 @@ const userController = {
     }
   },
   loginUser: async (req, res) => {
-    const { email, password } = req.body
     try {
-      const validUser = await User.findOne({ email })
-      const hashPass = await bcrypt.compare(password, validUser.password)
-      if (!validUser) {
-        return res.status(404).json({ message: 'User Not Found' })
-      }
-      if (!hashPass) {
-        return res.status(401).json({ message: 'Invalid Password' })
-      }
-      generateTokenAndSetCookie(validUser._id, res)
-      res.status(200).json({ message: 'Login Success', validUser })
+      let { identifier, password } = req.body // 'identifier' can be either username or email
+      identifier = identifier.toLowerCase()
+      const user = await User.findOne({
+        $or: [{ username: identifier }, { email: identifier }],
+      })
+
+      const isPasswordCorrect = await bcrypt.compare(
+        password,
+        user?.password || ''
+      )
+
+      if (!user || !isPasswordCorrect)
+        return res.status(400).json({ error: 'Invalid username or password' })
+      generateTokenAndSetCookie(user._id, res)
+      res.status(200).json({ message: 'Login Success', user })
     } catch (error) {
       res.status(500).json({ message: 'Failed Login', detail: error.message })
     }
@@ -75,6 +79,8 @@ const userController = {
         username,
         password: hashPass,
         name,
+        profilePic:
+          'https://images.unsplash.com/photo-1511367461989-f85a21fda167?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MTc4MTl8MHwxfHNlYXJjaHwxfHxwcm9maWxlfGVufDB8fHx8MTcwMjU5OTQzN3ww&ixlib=rb-4.0.3&q=80&w=1080',
       })
       const savedUser = await newUser.save()
       if (!savedUser) {

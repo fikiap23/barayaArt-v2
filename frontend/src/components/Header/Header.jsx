@@ -4,10 +4,16 @@ import { Link } from 'react-router-dom'
 import './Header.css'
 import { FaUserCircle } from 'react-icons/fa'
 import logoImage from '../../assets/logo.png'
-import { IoMenu } from 'react-icons/io5'
+
+import { useRecoilValue } from 'recoil'
+import userAtom from '../../atoms/userAtom'
+import CreatePost from '../Reactions/CreatePost'
+import { DropdownMenu } from '../Reactions/DropdownMenu'
 const Header = ({ fetchReq }) => {
   const [search, setSearch] = useState('')
   const [activeItem, setActiveItem] = useState(0)
+  const user = useRecoilValue(userAtom)
+  // console.log(user)
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -41,17 +47,32 @@ const Header = ({ fetchReq }) => {
         </div>
 
         <div className="flex gap-8 ">
-          <div className="md:flex align-center hidden ">
-            <button>Adversite</button>
+          <div className="md:flex align-center hidden items-center">
+            {user ? (
+              <button>Adversite</button>
+            ) : (
+              <Link to="/login">
+                <button>Login</button>
+              </Link>
+            )}
           </div>
           <div className="items-center user md:flex align-center hidden">
-            <button>Submit a photo</button>
-            <Link to="/u/user">
-              {' '}
-              <FaUserCircle className="text-[35px] text-[#bebebe] ml-[20px]" />
-            </Link>
+            {user ? (
+              <CreatePost></CreatePost>
+            ) : (
+              <Link to="/register">
+                <button>Register</button>
+              </Link>
+            )}
+            {user && (
+              <Link to={`/u/${user.username}`}>
+                {' '}
+                <FaUserCircle className="text-[35px] text-[#bebebe] ml-[20px]" />
+              </Link>
+            )}
           </div>
-          <IoMenu className="text-[35px] lg:flex align-center hidden" />
+
+          <DropdownMenu></DropdownMenu>
         </div>
       </div>
 

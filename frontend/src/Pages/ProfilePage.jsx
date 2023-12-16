@@ -2,9 +2,11 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Header from '../components/Header/Header'
-import PhotoGallery from '../components/PhotoGallery/PhotoGallery'
-import Popup from '../components/Popup/Popup'
+
 import bg from '../assets/bg.jpeg'
+import noProfile from '../assets/profile.png'
+import PhotoGalleryProfile from '../components/PhotoGallery/PhotoGalleryProfile'
+import PopupImgProfile from '../components/Popup/PopupImgProfile'
 
 const ProfilePage = () => {
   const [photos, setPhotos] = useState([])
@@ -13,28 +15,18 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(false)
 
   const { username } = useParams()
-  const [usernameData, setUsernameData] = useState({})
+  const [userData, setuserData] = useState({})
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const response = await fetch(
-        `https://api.unsplash.com/users/${username}?client_id=7rZCr4g4T9pmpdZ9Chw8B60qfv6PotjqGkXE6uMAUyM`
-      )
-      const data = await response.json()
-
-      setUsernameData(data)
-    }
-
-    const fetchMoreData = async () => {
-      setLoading(true)
-
+    const fetchPostByUser = async () => {
       try {
-        const url = `https://api.unsplash.com/users/${username}/photos?&per_page=100&client_id=7rZCr4g4T9pmpdZ9Chw8B60qfv6PotjqGkXE6uMAUyM`
+        setLoading(true)
+        const url = `/api/posts/user/${username}`
         const response = await fetch(url)
         const newData = await response.json()
-        // console.log(newData)
-
-        setPhotos(newData)
+        setuserData(newData.userData)
+        setPhotos(newData.postData)
+        setLoading(false)
       } catch (error) {
         console.error('Error fetching more data', error)
       } finally {
@@ -42,13 +34,15 @@ const ProfilePage = () => {
       }
     }
 
-    fetchUser()
-    fetchMoreData()
+    fetchPostByUser()
   }, [username])
 
   const handlePopup = (event) => {
     let id = event?.target?.getAttribute('id')
-    let popupPhotos = photos?.filter((photo) => photo?.id === id)
+    console.log('Id', id)
+
+    let popupPhotos = photos?.filter((photo) => photo?.image_public_id === id)
+    // console.log('popupPhotos', popupPhotos[0])
     setPopupArry(popupPhotos[0])
     setToggle(true)
   }
@@ -68,19 +62,27 @@ const ProfilePage = () => {
         }}
       >
         <div className="flex items-center gap-5 relative top-[80px] left-0  md:top-[180px] md:left-[130px] w-fit text-white font-medium">
-          <div className="w-[80px] h-[80px] md:w-[140px] md:h-[140px] overflow-hidden bg-[#686868] rounded-full shadow-xl shadow-black">
+          <div className="w-[80px] h-[80px] md:w-[140px] md:h-[140px] bg-white overflow-hidden  rounded-full shadow-xl shadow-black">
             <img
-              src={usernameData?.profile_image?.large}
+              src={userData?.profilePic || noProfile}
               alt="avatar"
               className="w-full h-full object-cover"
             />
           </div>
           <div>
-            <h1 className="text-xl md:text-3xl">{usernameData?.name}</h1>
-            <div className="flex  gap-2 md:gap-4 lg:gap-8">
-              <p>@{usernameData?.username}</p>
-              <p>{usernameData?.followers_count} Followers</p>
-              <p>{usernameData?.following_count} Following</p>
+            <h1 className="text-xl md:text-3xl">{userData?.name}</h1>
+            <div className="flex gap-2 md:gap-4 lg:gap-8">
+              <p>@{userData?.username}</p>
+              <p>
+                {userData.followers
+                  ? `${userData.followers.length} followers`
+                  : 'Loading followers...'}{' '}
+              </p>
+              <p>
+                {userData.following
+                  ? `${userData.following.length} following`
+                  : 'Loading following...'}{' '}
+              </p>
             </div>
           </div>
         </div>
@@ -270,11 +272,19 @@ const ProfilePage = () => {
       {/* Tabs End */}
 
       {/* Use the Gallery component */}
-      <PhotoGallery photos={photos} handlePopup={handlePopup} />
+      <PhotoGalleryProfile
+        photos={photos}
+        handlePopup={handlePopup}
+        userData={userData}
+      />
       {loading && <p>Loading...</p>}
       {toggle && (
-        <div onClick={handleHide} className="popudp">
-          <Popup handlePopup={popupArry} />
+        <div className="popudp">
+          <PopupImgProfile
+            handlePopup={popupArry}
+            handleHide={handleHide}
+            userData={userData}
+          />
         </div>
       )}
     </>
