@@ -8,6 +8,7 @@ import { IoMenu } from 'react-icons/io5'
 import { useRecoilValue } from 'recoil'
 import userAtom from '../../atoms/userAtom'
 import CreatePost from '../Reactions/CreatePost'
+import { DropdownMenu } from '../Reactions/DropdownMenu'
 const Header = ({ fetchReq }) => {
   const [search, setSearch] = useState('')
   const [activeItem, setActiveItem] = useState(0)
@@ -70,7 +71,8 @@ const Header = ({ fetchReq }) => {
               </Link>
             )}
           </div>
-          <IoMenu className="text-[35px] lg:flex align-center hidden" />
+
+          <DropdownMenu></DropdownMenu>
         </div>
       </div>
 

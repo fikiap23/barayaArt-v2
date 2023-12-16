@@ -1,13 +1,11 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import logoImage from '../assets/logo.png'
 const LoginPage = () => {
   const [formData, setFormData] = useState({
     identifier: '',
     password: '',
   })
-
-  const navigate = useNavigate()
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -27,7 +25,7 @@ const LoginPage = () => {
       .then((data) => {
         console.log('Login successful:', data.user)
         localStorage.setItem('user-baraya', JSON.stringify(data.user))
-        navigate('/')
+        window.location.href = '/'
       })
       .catch((error) => {
         console.error('Login failed:', error.message)
