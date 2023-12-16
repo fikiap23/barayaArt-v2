@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 export const Comment = ({ comment }) => {
   return (
-    <div className="w-[90%]  bg-white mx-auto px-4">
+    <div className="w-[90%]  bg-white mx-auto p-4 my-2">
       <header className="flex justify-between items-center mb-2">
         <div className="flex items-center">
           <p className="inline-flex items-center mr-3 text-sm text-gray-900  font-semibold">

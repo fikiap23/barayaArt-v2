@@ -32,7 +32,7 @@ const Popup = ({ handlePopup, handleHide }) => {
         const result = dataJ.comments
         //  console.log(result)
         setComments(result)
-        console.log(comments)
+        // console.log(comments)
         setLoading(false)
       } catch (error) {
         console.error('Error fetching data', error)
@@ -149,7 +149,7 @@ const Popup = ({ handlePopup, handleHide }) => {
               Discussion
             </h2>
           </div>
-          {user && <CreateComment></CreateComment>}
+          {user && <CreateComment postId={handlePopup._id}></CreateComment>}
           {comments?.length > 0 ? (
             comments?.map((comment) => (
               <Comment key={comment._id} comment={comment} />
