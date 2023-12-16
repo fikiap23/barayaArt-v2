@@ -4,11 +4,39 @@ import './Popup.css'
 import { saveAs } from 'file-saver'
 import { Link } from 'react-router-dom'
 import CreateComment from '../Reactions/CreateComment'
+import { useEffect, useState } from 'react'
+import { useRecoilValue } from 'recoil'
+import userAtom from '../../atoms/userAtom'
+import { Comment } from '../Reactions/Comment'
 
 const PopupImgProfile = ({ handlePopup, handleHide, userData }) => {
+  const [comments, setComments] = useState('')
+  const [loading, setLoading] = useState(false)
+  const user = useRecoilValue(userAtom)
   const downloadImage = (image_url, image_name) => {
     saveAs(image_url, image_name) // Put your image URL here.
   }
+
+  useEffect(() => {
+    const fetchRequest = async () => {
+      const url = `/api/comments/${handlePopup?._id}`
+
+      try {
+        setLoading(true)
+        const data = await fetch(url)
+        const dataJ = await data.json()
+        // console.log(dataJ.comments)
+        const result = dataJ.comments
+        //  console.log(result)
+        setComments(result)
+        // console.log(comments)
+        setLoading(false)
+      } catch (error) {
+        console.error('Error fetching data', error)
+      }
+    }
+    fetchRequest()
+  }, [comments, handlePopup?._id])
 
   return (
     <div>
@@ -111,7 +139,19 @@ const PopupImgProfile = ({ handlePopup, handleHide, userData }) => {
               </button>
             </div>
           </div>
-          <CreateComment></CreateComment>
+          <div className="flex justify-start items-center mb-6">
+            <h2 className="text-lg lg:text-2xl font-bold text-gray-900 ">
+              Discussion
+            </h2>
+          </div>
+          {user && <CreateComment postId={handlePopup._id}></CreateComment>}
+          {comments?.length > 0 ? (
+            comments?.map((comment) => (
+              <Comment key={comment._id} comment={comment} />
+            ))
+          ) : (
+            <p>Be the first to comment</p>
+          )}
         </div>
       )}
     </div>
