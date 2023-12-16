@@ -77,7 +77,7 @@ const HomePage = ({ comName }) => {
       const data = await fetch(url)
       const dataJ = await data.json()
       const result = dataJ.posts
-      console.log(result)
+      // console.log(result)
       setPhotos(result)
       setLoading(false)
     } catch (error) {

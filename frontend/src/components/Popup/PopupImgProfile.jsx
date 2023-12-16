@@ -3,7 +3,7 @@
 import './Popup.css'
 import { saveAs } from 'file-saver'
 import { Link } from 'react-router-dom'
-import Comment from '../Reactions/Comment'
+import CreateComment from '../Reactions/CreateComment'
 
 const PopupImgProfile = ({ handlePopup, handleHide, userData }) => {
   const downloadImage = (image_url, image_name) => {
@@ -13,36 +13,39 @@ const PopupImgProfile = ({ handlePopup, handleHide, userData }) => {
   return (
     <div>
       {handlePopup?._id && (
-        <div className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-full h-full bg-white p-[10px] m-auto flex flex-col items-center rounded-[4px] z-10 overflow-auto  ">
+        <div className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-full md:w-[70%] h-full bg-slate-100 p-[10px] m-auto flex flex-col items-center rounded-[4px] z-10 overflow-auto  ">
+          <div className="flex justify-between items-center w-full p-4">
+            <Link to={`/u/${userData?.username}`}>
+              <div className="userInfo">
+                <img
+                  src={userData?.profilePic}
+                  alt="user"
+                  className="w-12 h-12 rounded-full"
+                />
+                <div>
+                  <b>{userData?.name}</b>
+                  <p>{userData?.username}</p>
+                </div>
+              </div>
+            </Link>
+            <div className="closeBtn">
+              <button
+                className="downloadButton"
+                title="close"
+                onClick={() => handleHide()}
+              >
+                X
+              </button>
+            </div>
+          </div>
           <div>
             <img
-              className=" w-[400px] h-[500px] object-contain"
+              className="object-contain"
               src={handlePopup?.image}
               alt={handlePopup?.description}
             />
           </div>
-          <div className="closeBtn">
-            <button
-              className="downloadButton"
-              title="close"
-              onClick={() => handleHide()}
-            >
-              X
-            </button>
-          </div>
-          <Link to={`/u/${userData?.username}`}>
-            <div className="userInfo">
-              <img
-                src={userData?.profilePic}
-                alt="user"
-                className="w-12 h-12 rounded-full"
-              />
-              <div>
-                <b>{userData?.name}</b>
-                <p>{userData?.username}</p>
-              </div>
-            </div>
-          </Link>
+
           <div className="additionalInfo p-4 border-t border-gray-300 w-full">
             <div className="downloadBtn w-fit ">
               <button
@@ -108,7 +111,7 @@ const PopupImgProfile = ({ handlePopup, handleHide, userData }) => {
               </button>
             </div>
           </div>
-          <Comment></Comment>
+          <CreateComment></CreateComment>
         </div>
       )}
     </div>

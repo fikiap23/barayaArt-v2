@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import './Header.css'
 import { FaUserCircle } from 'react-icons/fa'
 import logoImage from '../../assets/logo.png'
-import { IoMenu } from 'react-icons/io5'
+
 import { useRecoilValue } from 'recoil'
 import userAtom from '../../atoms/userAtom'
 import CreatePost from '../Reactions/CreatePost'
@@ -13,7 +13,7 @@ const Header = ({ fetchReq }) => {
   const [search, setSearch] = useState('')
   const [activeItem, setActiveItem] = useState(0)
   const user = useRecoilValue(userAtom)
-  console.log(user)
+  // console.log(user)
 
   const handleSubmit = (event) => {
     event.preventDefault()

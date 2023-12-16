@@ -279,8 +279,12 @@ const ProfilePage = () => {
       />
       {loading && <p>Loading...</p>}
       {toggle && (
-        <div onClick={handleHide} className="popudp">
-          <PopupImgProfile handlePopup={popupArry} userData={userData} />
+        <div className="popudp">
+          <PopupImgProfile
+            handlePopup={popupArry}
+            handleHide={handleHide}
+            userData={userData}
+          />
         </div>
       )}
     </>

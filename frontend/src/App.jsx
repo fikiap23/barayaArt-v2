@@ -13,7 +13,7 @@ import RegisterPage from './Pages/RegisterPage'
 
 function App() {
   const user = useRecoilValue(userAtom)
-  console.log(user)
+  // console.log(user)
 
   const Route = createBrowserRouter([
     {

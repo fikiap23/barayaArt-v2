@@ -13,7 +13,7 @@ const PhotoGallery = ({ photos, handlePopup }) => {
     saveAs(image_url, image_name) // Put your image URL here.
   }
 
-  console.log(photos)
+  // console.log(photos)
 
   return (
     <ResponsiveMasonry columnsCountBreakPoints={{ 0: 1, 576: 2, 768: 3 }}>
