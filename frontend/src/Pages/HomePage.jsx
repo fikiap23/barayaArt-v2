@@ -115,12 +115,6 @@ const HomePage = ({ comName }) => {
   //   return data.results
   // }
 
-  const fetchReq = (inputValue) => {
-    featured = inputValue
-    // setCurrentPage(1)
-    fetchRequest()
-  }
-
   const handlePopup = (event) => {
     let id = event?.target?.getAttribute('id')
     console.log('Id', id)
@@ -137,7 +131,7 @@ const HomePage = ({ comName }) => {
 
   return (
     <>
-      <Header fetchReq={fetchReq} />
+      <Header />
 
       <div className="hero">
         {

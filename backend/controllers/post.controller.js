@@ -216,13 +216,25 @@ const postController = {
         return res.status(400).json({ error: 'Category parameter is required' })
       }
 
-      // Use aggregate to get posts by category (case-insensitive)
+      // Use aggregate to get posts by category (case-insensitive) and populate 'postedBy'
       const posts = await Post.aggregate([
         { $match: { category: { $regex: new RegExp(category, 'i') } } },
+        {
+          $lookup: {
+            from: 'users', // Assuming 'users' is the name of your users collection
+            localField: 'postedBy',
+            foreignField: '_id',
+            as: 'postedBy',
+          },
+        },
+        { $unwind: '$postedBy' }, // Unwind to get a single object instead of an array
         { $sort: { createdAt: -1 } },
       ])
 
-      res.status(200).json({ message: 'Get Posts by Category Success', posts })
+      res.status(200).json({
+        message: 'Get Posts by Category Success',
+        posts,
+      })
     } catch (error) {
       console.error('Error in getPostsByCategory:', error)
       res.status(500).json({ error: 'Internal Server Error' })
