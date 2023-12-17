@@ -111,11 +111,9 @@ const postController = {
       const { description, postedBy, category } = req.body
       let { image } = req.body
       if (!postedBy || !image || !category) {
-        return res
-          .status(400)
-          .json({
-            error: 'Postedby and image and category fields are required',
-          })
+        return res.status(400).json({
+          error: 'Postedby and image and category fields are required',
+        })
       }
       const user = await User.findById(postedBy)
       if (!user) {
@@ -186,6 +184,7 @@ const postController = {
         .json({ message: 'Failed Update Post', detail: error.message })
     }
   },
+
   deletePost: async (req, res) => {
     try {
       const post = await Post.findById(req.params.id)
@@ -205,6 +204,28 @@ const postController = {
       res
         .status(400)
         .json({ message: 'Failed Delete Post', detail: error.message })
+    }
+  },
+
+  getPostsByCategory: async (req, res) => {
+    try {
+      const { category } = req.params
+
+      // Validate category
+      if (!category) {
+        return res.status(400).json({ error: 'Category parameter is required' })
+      }
+
+      // Use aggregate to get posts by category (case-insensitive)
+      const posts = await Post.aggregate([
+        { $match: { category: { $regex: new RegExp(category, 'i') } } },
+        { $sort: { createdAt: -1 } },
+      ])
+
+      res.status(200).json({ message: 'Get Posts by Category Success', posts })
+    } catch (error) {
+      console.error('Error in getPostsByCategory:', error)
+      res.status(500).json({ error: 'Internal Server Error' })
     }
   },
 }

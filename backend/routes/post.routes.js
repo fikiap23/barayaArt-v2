@@ -59,6 +59,9 @@ router.get('/:id', postController.getPostById)
 // get post by user
 router.get('/user/:userIdOrUsername', postController.getPostByUserIdOrUsername)
 
+// get post by category
+router.get('/category/:category', postController.getPostsByCategory)
+
 /**
  * @swagger
  * /posts:
