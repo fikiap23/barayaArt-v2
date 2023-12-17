@@ -3,6 +3,9 @@ import { IoMenu } from 'react-icons/io5'
 import { Link } from 'react-router-dom'
 import { useSetRecoilState } from 'recoil'
 import userAtom from '../../atoms/userAtom'
+import { toast } from 'react-toastify'
+
+import 'react-toastify/dist/ReactToastify.css'
 
 export const DropdownMenu = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -24,15 +27,21 @@ export const DropdownMenu = () => {
       const data = await res.json()
 
       if (data.error) {
-        console.log('Error', data.error, 'error')
+        toast.error(data.error, {
+          position: toast.POSITION.BOTTOM_CENTER,
+        })
         return
       }
 
       localStorage.removeItem('user-baraya')
       setUser(null)
-      console.log('Success', 'Logged out successfully', 'success')
+      toast.success('Logout successful', {
+        position: toast.POSITION.BOTTOM_CENTER,
+      })
     } catch (error) {
-      console.log('Error', error, 'error')
+      toast.error(error, {
+        position: toast.POSITION.BOTTOM_CENTER,
+      })
     }
   }
 
