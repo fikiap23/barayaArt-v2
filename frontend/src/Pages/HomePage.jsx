@@ -36,7 +36,7 @@ const HomePage = ({ comName }) => {
     if (comName === 'Random') {
       fetchRequest()
     } else if (comName === 'people') {
-      fetchRequest()
+      fetchFeedRequest()
     } else {
       fetchPostByCategory()
     }
@@ -84,6 +84,22 @@ const HomePage = ({ comName }) => {
       const result = dataJ.posts
       // console.log(result)
       setPhotos(result)
+      setLoading(false)
+    } catch (error) {
+      console.error('Error fetching data', error)
+    }
+  }
+
+  const fetchFeedRequest = async () => {
+    const url = `/api/posts/feed`
+
+    try {
+      setLoading(true)
+      const data = await fetch(url)
+      const dataJ = await data.json()
+
+      // console.log(result)
+      setPhotos(dataJ)
       setLoading(false)
     } catch (error) {
       console.error('Error fetching data', error)
