@@ -60,6 +60,10 @@ export const EditProfile = ({ user }) => {
       setLoading(false)
     } catch (error) {
       console.log('Error', error, 'error')
+      toast.error('Something went wrong', {
+        position: toast.POSITION.BOTTOM_CENTER,
+      })
+      setLoading(false)
     }
   }
   return (
