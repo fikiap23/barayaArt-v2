@@ -93,7 +93,7 @@ function App() {
     },
     {
       path: '/u/:username',
-      element: <ProfilePage comName={'hello'} />,
+      element: <ProfilePage />,
     },
     {
       path: 'settings',

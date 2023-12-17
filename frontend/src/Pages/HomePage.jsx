@@ -15,8 +15,6 @@ const HomePage = ({ comName }) => {
   // const [currentPage, setCurrentPage] = useState(1)
   const [showScrollToTop, setShowScrollToTop] = useState(false)
 
-  let featured = comName
-
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -34,8 +32,15 @@ const HomePage = ({ comName }) => {
   }, [])
 
   useEffect(() => {
-    document.title = 'Beautiful Free Image & Picture'
-    fetchRequest()
+    document.title = `BarayaArt | ${comName}`
+    if (comName === 'Random') {
+      fetchRequest()
+    } else if (comName === 'people') {
+      fetchRequest()
+    } else {
+      fetchPostByCategory()
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [comName])
 
@@ -71,6 +76,22 @@ const HomePage = ({ comName }) => {
 
   const fetchRequest = async () => {
     const url = `/api/posts/`
+
+    try {
+      setLoading(true)
+      const data = await fetch(url)
+      const dataJ = await data.json()
+      const result = dataJ.posts
+      // console.log(result)
+      setPhotos(result)
+      setLoading(false)
+    } catch (error) {
+      console.error('Error fetching data', error)
+    }
+  }
+
+  const fetchPostByCategory = async () => {
+    const url = `/api/posts/category/${comName}`
 
     try {
       setLoading(true)
