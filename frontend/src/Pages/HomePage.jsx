@@ -6,6 +6,8 @@ import PhotoGallery from '../components/PhotoGallery/PhotoGallery'
 import Popup from '../components/Popup/Popup'
 import { MdKeyboardDoubleArrowUp } from 'react-icons/md'
 import bg from '../assets/bg.jpeg'
+import { useRecoilValue } from 'recoil'
+import userAtom from '../atoms/userAtom'
 
 const HomePage = ({ comName }) => {
   const [photos, setPhotos] = useState([])
@@ -14,6 +16,7 @@ const HomePage = ({ comName }) => {
   const [loading, setLoading] = useState(false)
   // const [currentPage, setCurrentPage] = useState(1)
   const [showScrollToTop, setShowScrollToTop] = useState(false)
+  const user = useRecoilValue(userAtom)
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -36,7 +39,7 @@ const HomePage = ({ comName }) => {
     if (comName === 'Random') {
       fetchRequest()
     } else if (comName === 'people') {
-      fetchFeedRequest()
+      user ? fetchFeedRequest() : setPhotos([])
     } else {
       fetchPostByCategory()
     }
