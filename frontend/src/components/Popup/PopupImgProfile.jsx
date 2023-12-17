@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 import userAtom from '../../atoms/userAtom'
 import { Comment } from '../Reactions/Comment'
+import { AlertDownload } from '../Reactions/AlertDownload'
 
 const PopupImgProfile = ({ handlePopup, handleHide, userData }) => {
   const [comments, setComments] = useState('')
@@ -75,16 +76,12 @@ const PopupImgProfile = ({ handlePopup, handleHide, userData }) => {
           </div>
 
           <div className="additionalInfo p-4 border-t border-gray-300 w-full">
-            <div className="downloadBtn w-fit ">
-              <button
-                className="downloadButton"
-                title="close"
-                onClick={() =>
-                  downloadImage(handlePopup?.image, handlePopup?.description)
-                }
-              >
-                Download
-              </button>
+            <div className="flex items-center ">
+              <AlertDownload
+                image_url={handlePopup.image}
+                image_name={handlePopup.description}
+                isButton={true}
+              ></AlertDownload>
             </div>
             <p className="text-gray-700">
               <span className="font-bold">Likes:</span>{' '}
@@ -96,7 +93,7 @@ const PopupImgProfile = ({ handlePopup, handleHide, userData }) => {
             </p>
             <p className="text-gray-700">
               <span className="font-bold">Publish Time:</span>{' '}
-              {handlePopup?.created_at}
+              {handlePopup?.createdAt}
             </p>
           </div>
           <div className="flex justify-evenly items-center w-full">

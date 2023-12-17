@@ -95,10 +95,11 @@ const postController = {
 
       const following = user.following
 
-      // Menggunakan $in untuk mencakup postingan dari orang yang diikuti dan postingan sendiri
       const feedPosts = await Post.find({
-        $or: [{ postedBy: { $in: following } }, { postedBy: userId }],
-      }).sort({ createdAt: -1 })
+        $or: [{ postedBy: { $in: following } }],
+      })
+        .populate('postedBy', '-password') // Exclude the password field
+        .sort({ createdAt: -1 })
 
       res.status(200).json(feedPosts)
     } catch (err) {
@@ -108,12 +109,12 @@ const postController = {
 
   createPost: async (req, res) => {
     try {
-      const { description, postedBy } = req.body
+      const { description, postedBy, category } = req.body
       let { image } = req.body
-      if (!postedBy || !image) {
-        return res
-          .status(400)
-          .json({ error: 'Postedby and image fields are required' })
+      if (!postedBy || !image || !category) {
+        return res.status(400).json({
+          error: 'Postedby and image and category fields are required',
+        })
       }
       const user = await User.findById(postedBy)
       if (!user) {
@@ -131,6 +132,7 @@ const postController = {
         image_public_id: imageUrl.public_id,
         description,
         postedBy,
+        category,
       })
       const savedPost = await post.save()
       res.status(201).json({
@@ -183,6 +185,7 @@ const postController = {
         .json({ message: 'Failed Update Post', detail: error.message })
     }
   },
+
   deletePost: async (req, res) => {
     try {
       const post = await Post.findById(req.params.id)
@@ -202,6 +205,64 @@ const postController = {
       res
         .status(400)
         .json({ message: 'Failed Delete Post', detail: error.message })
+    }
+  },
+
+  getPostsByCategory: async (req, res) => {
+    try {
+      const { category } = req.params
+
+      // Validate category
+      if (!category) {
+        return res.status(400).json({ error: 'Category parameter is required' })
+      }
+
+      // Use aggregate to get posts by category (case-insensitive) and populate 'postedBy'
+      const posts = await Post.aggregate([
+        { $match: { category: { $regex: new RegExp(category, 'i') } } },
+        {
+          $lookup: {
+            from: 'users', // Assuming 'users' is the name of your users collection
+            localField: 'postedBy',
+            foreignField: '_id',
+            as: 'postedBy',
+          },
+        },
+        { $unwind: '$postedBy' }, // Unwind to get a single object instead of an array
+        { $sort: { createdAt: -1 } },
+      ])
+
+      res.status(200).json({
+        message: 'Get Posts by Category Success',
+        posts,
+      })
+    } catch (error) {
+      console.error('Error in getPostsByCategory:', error)
+      res.status(500).json({ error: 'Internal Server Error' })
+    }
+  },
+  getPostByQuery: async (req, res) => {
+    try {
+      const { query } = req.params
+
+      // Validate query
+      if (!query) {
+        return res.status(400).json({ error: 'Query parameter is required' })
+      }
+
+      const posts = await Post.find({
+        $or: [
+          { description: { $regex: new RegExp(query, 'i') } },
+          { category: { $regex: new RegExp(query, 'i') } },
+        ],
+      })
+        .sort({ createdAt: -1 })
+        .populate('postedBy', '-password')
+
+      res.status(200).json({ message: 'Search Posts by Query Success', posts })
+    } catch (error) {
+      console.error('Error in getPostByQuery:', error)
+      res.status(500).json({ error: 'Internal Server Error' })
     }
   },
 }

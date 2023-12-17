@@ -7,6 +7,11 @@ import bg from '../assets/bg.jpeg'
 import noProfile from '../assets/profile.png'
 import PhotoGalleryProfile from '../components/PhotoGallery/PhotoGalleryProfile'
 import PopupImgProfile from '../components/Popup/PopupImgProfile'
+import { useRecoilValue } from 'recoil'
+import userAtom from '../atoms/userAtom'
+import { toast } from 'react-toastify'
+
+import 'react-toastify/dist/ReactToastify.css'
 
 const ProfilePage = () => {
   const [photos, setPhotos] = useState([])
@@ -14,8 +19,65 @@ const ProfilePage = () => {
   const [toggle, setToggle] = useState(false)
   const [loading, setLoading] = useState(false)
 
+  const [updating, setUpdating] = useState(false)
+  const currentUser = useRecoilValue(userAtom)
+
   const { username } = useParams()
   const [userData, setuserData] = useState({})
+  const [following, setFollowing] = useState(
+    currentUser?.following?.includes(userData?._id)
+  )
+
+  const handleFollowUnfollow = async (user) => {
+    if (!currentUser) {
+      toast.error('Please login to follow', {
+        position: toast.POSITION.BOTTOM_CENTER,
+      })
+      return
+    }
+    if (updating) return
+
+    setUpdating(true)
+    try {
+      const res = await fetch(
+        `/api/users/follow/${user._id ? user._id : user.userId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+      const data = await res.json()
+      if (data.error) {
+        toast.error(data.error, {
+          position: toast.POSITION.BOTTOM_CENTER,
+        })
+        return
+      }
+
+      if (following) {
+        toast.success(` Unfollowed ${user.name}`, {
+          position: toast.POSITION.BOTTOM_CENTER,
+        })
+        user.followers.pop()
+      } else {
+        toast.success(` Followed ${user.name}`, {
+          position: toast.POSITION.BOTTOM_CENTER,
+        })
+        user.followers.push(currentUser?._id)
+      }
+      setFollowing(!following)
+
+      console.log(data)
+    } catch (error) {
+      toast.error(error.message, {
+        position: toast.POSITION.BOTTOM_CENTER,
+      })
+    } finally {
+      setUpdating(false)
+    }
+  }
 
   useEffect(() => {
     const fetchPostByUser = async () => {
@@ -26,6 +88,7 @@ const ProfilePage = () => {
         const newData = await response.json()
         setuserData(newData.userData)
         setPhotos(newData.postData)
+
         setLoading(false)
       } catch (error) {
         console.error('Error fetching more data', error)
@@ -36,6 +99,10 @@ const ProfilePage = () => {
 
     fetchPostByUser()
   }, [username])
+
+  useEffect(() => {
+    setFollowing(userData.followers?.includes(currentUser?._id))
+  }, [currentUser?._id, userData.followers])
 
   const handlePopup = (event) => {
     let id = event?.target?.getAttribute('id')
@@ -84,6 +151,15 @@ const ProfilePage = () => {
                   : 'Loading following...'}{' '}
               </p>
             </div>
+            {userData && currentUser?._id !== userData?._id && (
+              <button
+                onClick={() => handleFollowUnfollow(userData)}
+                type="button"
+                className="text-white bg-gradient-to-r mt-5 from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+              >
+                {following ? 'Unfollow' : 'Follow'}
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -10,6 +10,7 @@ import CreateComment from '../Reactions/CreateComment'
 import { Comment } from '../Reactions/Comment'
 import { useRecoilValue } from 'recoil'
 import userAtom from '../../atoms/userAtom'
+import { AlertDownload } from '../Reactions/AlertDownload'
 
 const Popup = ({ handlePopup, handleHide }) => {
   const [comments, setComments] = useState('')
@@ -78,16 +79,12 @@ const Popup = ({ handlePopup, handleHide }) => {
           </div>
 
           <div className="additionalInfo p-4 border-t border-gray-300 w-full">
-            <div className="downloadBtn w-fit ">
-              <button
-                className="downloadButton"
-                title="close"
-                onClick={() =>
-                  downloadImage(handlePopup?.image, handlePopup?.description)
-                }
-              >
-                Download
-              </button>
+            <div className="flex items-center ">
+              <AlertDownload
+                image_url={handlePopup.image}
+                image_name={handlePopup.description}
+                isButton={true}
+              ></AlertDownload>
             </div>
             <p className="text-gray-700">
               <span className="font-bold">Likes:</span>{' '}

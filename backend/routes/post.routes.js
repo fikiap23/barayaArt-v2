@@ -29,6 +29,9 @@ router.get('/', postController.getPost)
 // get feed
 router.get('/feed', protectRoute, postController.getFeedPosts)
 
+// search post
+router.get('/search/:query', postController.getPostByQuery)
+
 /**
  * @swagger
  * /posts/{id}:
@@ -58,6 +61,9 @@ router.get('/:id', postController.getPostById)
 
 // get post by user
 router.get('/user/:userIdOrUsername', postController.getPostByUserIdOrUsername)
+
+// get post by category
+router.get('/category/:category', postController.getPostsByCategory)
 
 /**
  * @swagger

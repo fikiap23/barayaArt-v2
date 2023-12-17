@@ -6,6 +6,8 @@ import PhotoGallery from '../components/PhotoGallery/PhotoGallery'
 import Popup from '../components/Popup/Popup'
 import { MdKeyboardDoubleArrowUp } from 'react-icons/md'
 import bg from '../assets/bg.jpeg'
+import { useRecoilValue } from 'recoil'
+import userAtom from '../atoms/userAtom'
 
 const HomePage = ({ comName }) => {
   const [photos, setPhotos] = useState([])
@@ -14,8 +16,7 @@ const HomePage = ({ comName }) => {
   const [loading, setLoading] = useState(false)
   // const [currentPage, setCurrentPage] = useState(1)
   const [showScrollToTop, setShowScrollToTop] = useState(false)
-
-  let featured = comName
+  const user = useRecoilValue(userAtom)
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -28,14 +29,37 @@ const HomePage = ({ comName }) => {
     setShowScrollToTop(window.scrollY > 200)
   }
 
+  const handleSearch = async (search) => {
+    const url = `/api/posts/search/${search}`
+
+    try {
+      setLoading(true)
+      const data = await fetch(url)
+      const dataJ = await data.json()
+      const result = dataJ.posts
+      // console.log(result)
+      setPhotos(result)
+      setLoading(false)
+    } catch (error) {
+      console.error('Error fetching data', error)
+    }
+  }
+
   useEffect(() => {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   useEffect(() => {
-    document.title = 'Beautiful Free Image & Picture'
-    fetchRequest()
+    document.title = `BarayaArt | ${comName}`
+    if (comName === 'Random') {
+      fetchRequest()
+    } else if (comName === 'people') {
+      user ? fetchFeedRequest() : setPhotos([])
+    } else {
+      fetchPostByCategory()
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [comName])
 
@@ -85,6 +109,38 @@ const HomePage = ({ comName }) => {
     }
   }
 
+  const fetchFeedRequest = async () => {
+    const url = `/api/posts/feed`
+
+    try {
+      setLoading(true)
+      const data = await fetch(url)
+      const dataJ = await data.json()
+
+      // console.log(result)
+      setPhotos(dataJ)
+      setLoading(false)
+    } catch (error) {
+      console.error('Error fetching data', error)
+    }
+  }
+
+  const fetchPostByCategory = async () => {
+    const url = `/api/posts/category/${comName}`
+
+    try {
+      setLoading(true)
+      const data = await fetch(url)
+      const dataJ = await data.json()
+      const result = dataJ.posts
+      // console.log(result)
+      setPhotos(result)
+      setLoading(false)
+    } catch (error) {
+      console.error('Error fetching data', error)
+    }
+  }
+
   // const fetchNewData = async () => {
   //   const newUrl = `https://api.unsplash.com/search/photos?page=${
   //     currentPage + 1
@@ -93,12 +149,6 @@ const HomePage = ({ comName }) => {
   //   const data = await response.json()
   //   return data.results
   // }
-
-  const fetchReq = (inputValue) => {
-    featured = inputValue
-    // setCurrentPage(1)
-    fetchRequest()
-  }
 
   const handlePopup = (event) => {
     let id = event?.target?.getAttribute('id')
@@ -116,7 +166,7 @@ const HomePage = ({ comName }) => {
 
   return (
     <>
-      <Header fetchReq={fetchReq} />
+      <Header handleSearch={handleSearch} />
 
       <div className="hero">
         {

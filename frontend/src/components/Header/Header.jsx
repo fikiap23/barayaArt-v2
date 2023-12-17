@@ -1,23 +1,24 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import './Header.css'
-import { FaUserCircle } from 'react-icons/fa'
+
 import logoImage from '../../assets/logo.png'
 
 import { useRecoilValue } from 'recoil'
 import userAtom from '../../atoms/userAtom'
 import CreatePost from '../Reactions/CreatePost'
 import { DropdownMenu } from '../Reactions/DropdownMenu'
-const Header = ({ fetchReq }) => {
+const Header = ({ handleSearch }) => {
   const [search, setSearch] = useState('')
   const [activeItem, setActiveItem] = useState(0)
   const user = useRecoilValue(userAtom)
+  const navigate = useNavigate()
   // console.log(user)
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    fetchReq(search)
+    handleSearch(search)
   }
 
   const inputValue = (event) => {
@@ -32,7 +33,12 @@ const Header = ({ fetchReq }) => {
     <div className="px-8  mb-3 md:mb-5">
       <div className="flex justify-between items-center w-full">
         <div className="w-[45px] flex items-center">
-          <img src={logoImage} alt="logo" />
+          <img
+            src={logoImage}
+            alt="logo"
+            className="cursor-pointer"
+            onClick={() => navigate('/')}
+          />
           <div>
             <form onSubmit={handleSubmit} className="search">
               <input
@@ -67,7 +73,10 @@ const Header = ({ fetchReq }) => {
             {user && (
               <Link to={`/u/${user.username}`}>
                 {' '}
-                <FaUserCircle className="text-[35px] text-[#bebebe] ml-[20px]" />
+                <img
+                  src={user.profilePic}
+                  className="text-[35px] text-[#bebebe] ml-[20px] w-10 h-10 rounded-full cursor-pointer"
+                />
               </Link>
             )}
           </div>

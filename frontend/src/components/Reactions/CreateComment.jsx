@@ -1,14 +1,19 @@
 /* eslint-disable react/prop-types */
 
 import { useState } from 'react'
+import { toast } from 'react-toastify'
+
+import 'react-toastify/dist/ReactToastify.css'
 
 const CreateComment = ({ postId }) => {
   const [textComment, setTextComment] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault()
 
     try {
+      setLoading(true)
       const response = await fetch(`/api/comments/${postId}`, {
         method: 'POST',
         headers: {
@@ -17,17 +22,26 @@ const CreateComment = ({ postId }) => {
         body: JSON.stringify({ textComment }),
       })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message)
+        toast.error(data.message, {
+          position: toast.POSITION.BOTTOM_CENTER,
+        })
+        setLoading(false)
+        throw new Error(data.message || 'Failed to create comment')
       }
 
-      const data = await response.json()
-      console.log('Comment created successfully:', data)
+      toast.success('Comment created successfully', {
+        position: toast.POSITION.BOTTOM_CENTER,
+      })
       setTextComment('')
-      // You might want to update the UI here with the new comment.
+      setLoading(false)
     } catch (error) {
-      console.error('Error creating comment:', error.message)
+      toast.error(error.message, {
+        position: toast.POSITION.BOTTOM_CENTER,
+      })
+      setLoading(false)
       // Handle error (e.g., show an error message to the user).
     }
   }
@@ -53,7 +67,7 @@ const CreateComment = ({ postId }) => {
           type="submit"
           className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800"
         >
-          Post comment
+          {loading ? 'Loading...' : 'Post Comment'}
         </button>
       </form>
     </div>
