@@ -4,6 +4,9 @@ import usePreviewImg from '../../hooks/usePreviewImg'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import postsAtom from '../../atoms/postsAtom'
+import { toast } from 'react-toastify'
+
+import 'react-toastify/dist/ReactToastify.css'
 export default function CreatePost() {
   const [showModal, setShowModal] = useState(false)
   const [postText, setPostText] = useState('')
@@ -38,10 +41,15 @@ export default function CreatePost() {
 
       const data = await res.json()
       if (data.error) {
-        console.log('Error', data.error, 'error')
+        toast.error(data.error, {
+          position: toast.POSITION.BOTTOM_CENTER,
+        })
+        setLoading(false)
         return
       }
-      console.log('Success', 'Post created successfully', 'success')
+      toast.success('Post created successfully', {
+        position: toast.POSITION.BOTTOM_CENTER,
+      })
       if (username === user.username) {
         setPosts([data, ...posts])
       }
@@ -50,8 +58,12 @@ export default function CreatePost() {
       setImgUrl('')
       setShowModal(false)
       setLoading(false)
+      window.location.reload()
     } catch (error) {
-      console.log('Error', error, 'error')
+      toast.error(error, {
+        position: toast.POSITION.BOTTOM_CENTER,
+      })
+      setLoading(false)
     }
   }
 
@@ -169,7 +181,7 @@ export default function CreatePost() {
                     onClick={handleCreatePost}
                     style={{ color: 'white' }}
                   >
-                    Save Changes
+                    {loading ? 'Posting...' : 'Post'}
                   </button>
                 </div>
               </div>
