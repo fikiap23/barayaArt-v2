@@ -95,10 +95,11 @@ const postController = {
 
       const following = user.following
 
-      // Menggunakan $in untuk mencakup postingan dari orang yang diikuti dan postingan sendiri
       const feedPosts = await Post.find({
-        $or: [{ postedBy: { $in: following } }, { postedBy: userId }],
-      }).sort({ createdAt: -1 })
+        $or: [{ postedBy: { $in: following } }],
+      })
+        .populate('postedBy', '-password') // Exclude the password field
+        .sort({ createdAt: -1 })
 
       res.status(200).json(feedPosts)
     } catch (err) {
