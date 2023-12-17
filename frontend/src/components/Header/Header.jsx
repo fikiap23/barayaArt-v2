@@ -9,7 +9,7 @@ import { useRecoilValue } from 'recoil'
 import userAtom from '../../atoms/userAtom'
 import CreatePost from '../Reactions/CreatePost'
 import { DropdownMenu } from '../Reactions/DropdownMenu'
-const Header = ({ fetchReq }) => {
+const Header = ({ handleSearch }) => {
   const [search, setSearch] = useState('')
   const [activeItem, setActiveItem] = useState(0)
   const user = useRecoilValue(userAtom)
@@ -18,7 +18,7 @@ const Header = ({ fetchReq }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    fetchReq(search)
+    handleSearch(search)
   }
 
   const inputValue = (event) => {

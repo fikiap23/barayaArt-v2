@@ -29,6 +29,22 @@ const HomePage = ({ comName }) => {
     setShowScrollToTop(window.scrollY > 200)
   }
 
+  const handleSearch = async (search) => {
+    const url = `/api/posts/search/${search}`
+
+    try {
+      setLoading(true)
+      const data = await fetch(url)
+      const dataJ = await data.json()
+      const result = dataJ.posts
+      // console.log(result)
+      setPhotos(result)
+      setLoading(false)
+    } catch (error) {
+      console.error('Error fetching data', error)
+    }
+  }
+
   useEffect(() => {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
@@ -150,7 +166,7 @@ const HomePage = ({ comName }) => {
 
   return (
     <>
-      <Header />
+      <Header handleSearch={handleSearch} />
 
       <div className="hero">
         {
