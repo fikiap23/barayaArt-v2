@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import logoImage from '../assets/logo.png'
+import bgRegister from '../assets/bg-register.png'
 import { toast } from 'react-toastify'
 
 import 'react-toastify/dist/ReactToastify.css'
@@ -68,21 +69,21 @@ const RegisterPage = () => {
     <section
       className="bg-gray-50 dark:bg-gray-900"
       style={{
-        backgroundImage: `url('https://images.unsplash.com/photo-1517697471339-4aa32003c11a?w=3000&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGFydHxlbnwwfHwwfHx8MA%3D%3D')`,
+        backgroundImage: `url(${bgRegister})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
     >
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <a
-          href="#"
-          className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
-        >
-          <img className="w-8 h-8 mr-2" src={logoImage} alt="logo" />
-          BarayaArt
-        </a>
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+            <a
+              href="#"
+              className="flex items-center justify-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+            >
+              <img className="w-8 h-8 mr-2" src={logoImage} alt="logo" />
+              BarayaArt
+            </a>
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Create and account
             </h1>
