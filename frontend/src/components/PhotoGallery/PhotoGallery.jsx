@@ -1,17 +1,15 @@
 /* eslint-disable react/prop-types */
 // Gallery.js
 import { useState } from 'react'
-import { GoDownload } from 'react-icons/go'
+
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry'
-import { saveAs } from 'file-saver'
+
 import { FiMoreHorizontal } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
+import { AlertDownload } from '../Reactions/AlertDownload'
 
 const PhotoGallery = ({ photos, handlePopup }) => {
   const [hoveredPhoto, setHoveredPhoto] = useState(null)
-  const downloadImage = (image_url, image_name) => {
-    saveAs(image_url, image_name) // Put your image URL here.
-  }
 
   // console.log(photos)
 
@@ -67,14 +65,10 @@ const PhotoGallery = ({ photos, handlePopup }) => {
                         </p>
                       </div>
                     </Link>
-                    <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center cursor-pointer mr-[30px]">
-                      <GoDownload
-                        className="text-black text-3xl"
-                        onClick={() =>
-                          downloadImage(photo?.image, photo?.description)
-                        }
-                      />
-                    </div>
+                    <AlertDownload
+                      image_url={photo?.image}
+                      image_name={photo?.description}
+                    ></AlertDownload>
                   </div>
                 </div>
               )}
