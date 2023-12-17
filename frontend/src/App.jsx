@@ -1,6 +1,6 @@
 import './App.css'
 
-import { RouterProvider } from 'react-router-dom'
+import { Navigate, RouterProvider } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import { useRecoilValue } from 'recoil'
 import userAtom from './atoms/userAtom'
@@ -19,11 +19,11 @@ function App() {
   const Route = createBrowserRouter([
     {
       path: '/register',
-      element: <RegisterPage />,
+      element: user ? <Navigate to={'/'} /> : <RegisterPage />,
     },
     {
       path: '/login',
-      element: <LoginPage />,
+      element: user ? <Navigate to={'/'} /> : <LoginPage />,
     },
     {
       path: '/',
