@@ -23,6 +23,10 @@ const postSchema = mongoose.Schema(
       ref: 'User',
       default: [],
     },
+    category: {
+      type: [String],
+      default: [],
+    },
   },
   { timestamps: true }
 )

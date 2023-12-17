@@ -108,12 +108,14 @@ const postController = {
 
   createPost: async (req, res) => {
     try {
-      const { description, postedBy } = req.body
+      const { description, postedBy, category } = req.body
       let { image } = req.body
-      if (!postedBy || !image) {
+      if (!postedBy || !image || !category) {
         return res
           .status(400)
-          .json({ error: 'Postedby and image fields are required' })
+          .json({
+            error: 'Postedby and image and category fields are required',
+          })
       }
       const user = await User.findById(postedBy)
       if (!user) {
@@ -131,6 +133,7 @@ const postController = {
         image_public_id: imageUrl.public_id,
         description,
         postedBy,
+        category,
       })
       const savedPost = await post.save()
       res.status(201).json({
