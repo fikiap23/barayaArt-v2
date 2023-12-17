@@ -88,7 +88,7 @@ const ProfilePage = () => {
         const newData = await response.json()
         setuserData(newData.userData)
         setPhotos(newData.postData)
-        setFollowing(userData.followers.includes(currentUser?._id))
+
         setLoading(false)
       } catch (error) {
         console.error('Error fetching more data', error)
@@ -98,7 +98,11 @@ const ProfilePage = () => {
     }
 
     fetchPostByUser()
-  }, [currentUser?._id, userData, username])
+  }, [username])
+
+  useEffect(() => {
+    setFollowing(userData.followers?.includes(currentUser?._id))
+  }, [currentUser?._id, userData.followers])
 
   const handlePopup = (event) => {
     let id = event?.target?.getAttribute('id')
