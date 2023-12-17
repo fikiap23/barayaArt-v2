@@ -17,6 +17,7 @@ export const CategoryPost = ({ selectedCategories, setSelectedCategories }) => {
     'Fashion & Beauty',
     'Flim',
     'Food & Drink',
+    'Other',
   ]
 
   const handleCategoryChange = (event) => {
