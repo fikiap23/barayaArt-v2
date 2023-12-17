@@ -241,6 +241,30 @@ const postController = {
       res.status(500).json({ error: 'Internal Server Error' })
     }
   },
+  getPostByQuery: async (req, res) => {
+    try {
+      const { query } = req.params
+
+      // Validate query
+      if (!query) {
+        return res.status(400).json({ error: 'Query parameter is required' })
+      }
+
+      const posts = await Post.find({
+        $or: [
+          { description: { $regex: new RegExp(query, 'i') } },
+          { category: { $regex: new RegExp(query, 'i') } },
+        ],
+      })
+        .sort({ createdAt: -1 })
+        .populate('postedBy', '-password')
+
+      res.status(200).json({ message: 'Search Posts by Query Success', posts })
+    } catch (error) {
+      console.error('Error in getPostByQuery:', error)
+      res.status(500).json({ error: 'Internal Server Error' })
+    }
+  },
 }
 
 export default postController

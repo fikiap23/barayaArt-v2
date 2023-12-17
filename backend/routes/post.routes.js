@@ -29,6 +29,9 @@ router.get('/', postController.getPost)
 // get feed
 router.get('/feed', protectRoute, postController.getFeedPosts)
 
+// search post
+router.get('/search/:query', postController.getPostByQuery)
+
 /**
  * @swagger
  * /posts/{id}:
