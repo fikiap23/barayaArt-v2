@@ -7,6 +7,7 @@ import postsAtom from '../../atoms/postsAtom'
 import { toast } from 'react-toastify'
 
 import 'react-toastify/dist/ReactToastify.css'
+import { CategoryPost } from './CategoryPost'
 export default function CreatePost() {
   const [showModal, setShowModal] = useState(false)
   const [postText, setPostText] = useState('')
@@ -15,6 +16,7 @@ export default function CreatePost() {
   const [loading, setLoading] = useState(false)
   const { username } = useParams()
   const [posts, setPosts] = useRecoilState(postsAtom)
+  const [selectedCategories, setSelectedCategories] = useState([])
 
   const handleTextChange = (e) => {
     const inputText = e.target.value
@@ -36,6 +38,7 @@ export default function CreatePost() {
           postedBy: user._id,
           description: postText,
           image: imgUrl,
+          category: selectedCategories,
         }),
       })
 
@@ -155,6 +158,14 @@ export default function CreatePost() {
                     </div>
                   </section>
                   {/* form image end */}
+
+                  {/* form category */}
+                  <div className="mb-4">
+                    <CategoryPost
+                      selectedCategories={selectedCategories}
+                      setSelectedCategories={setSelectedCategories}
+                    ></CategoryPost>
+                  </div>
                   {/* form description */}
                   <div className="flex justify-center items-center">
                     <textarea
