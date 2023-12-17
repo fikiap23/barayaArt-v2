@@ -1,7 +1,7 @@
 import './App.css'
 
 import { RouterProvider } from 'react-router-dom'
-
+import { ToastContainer } from 'react-toastify'
 import { useRecoilValue } from 'recoil'
 import userAtom from './atoms/userAtom'
 import { createBrowserRouter } from 'react-router-dom'
@@ -10,6 +10,7 @@ import HomePage from './Pages/HomePage'
 import LoginPage from './Pages/LoginPage'
 import ProfilePage from './Pages/ProfilePage'
 import RegisterPage from './Pages/RegisterPage'
+import { SettingPage } from './Pages/SettingPage'
 
 function App() {
   const user = useRecoilValue(userAtom)
@@ -94,11 +95,16 @@ function App() {
       path: '/u/:username',
       element: <ProfilePage comName={'hello'} />,
     },
+    {
+      path: 'settings',
+      element: user ? <SettingPage /> : <LoginPage />,
+    },
   ])
 
   return (
     <>
       <RouterProvider router={Route} user={user} />
+      <ToastContainer />
     </>
   )
 }
