@@ -93,7 +93,7 @@ const PopupImgProfile = ({ handlePopup, handleHide, userData }) => {
             </p>
             <p className="text-gray-700">
               <span className="font-bold">Publish Time:</span>{' '}
-              {handlePopup?.created_at}
+              {handlePopup?.createdAt}
             </p>
           </div>
           <div className="flex justify-evenly items-center w-full">
