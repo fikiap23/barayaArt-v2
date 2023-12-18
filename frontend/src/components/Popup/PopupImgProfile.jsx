@@ -10,6 +10,8 @@ import userAtom from '../../atoms/userAtom'
 import { Comment } from '../Reactions/Comment'
 import { AlertDownload } from '../Reactions/AlertDownload'
 import postsAtom from '../../atoms/postsAtom'
+import { toast } from 'react-toastify'
+import { MdDelete } from 'react-icons/md'
 
 const PopupImgProfile = ({ handlePopup, handleHide, userData }) => {
   const [comments, setComments] = useState('')
@@ -20,6 +22,28 @@ const PopupImgProfile = ({ handlePopup, handleHide, userData }) => {
   const [posts, setPosts] = useRecoilState(postsAtom)
 
   let [likeCount, setLikeCount] = useState(handlePopup?.likes?.length)
+
+  const handleDeletePost = async (e) => {
+    try {
+      e.preventDefault()
+      if (!window.confirm('Are you sure you want to delete this post?')) return
+
+      const res = await fetch(`/api/posts/${handlePopup._id}`, {
+        method: 'DELETE',
+      })
+      const data = await res.json()
+      if (data.error) {
+        // showToast('Error', data.error, 'error')
+        return
+      }
+      toast.success('Post deleted successfully', {
+        position: toast.POSITION.BOTTOM_CENTER,
+      })
+      window.location.reload()
+    } catch (error) {
+      // showToast('Error', error.message, 'error')
+    }
+  }
   const handleLikeAndUnlike = async () => {
     if (!user)
       return console.log(
@@ -130,12 +154,21 @@ const PopupImgProfile = ({ handlePopup, handleHide, userData }) => {
           </div>
 
           <div className="additionalInfo p-4 border-t border-gray-300 w-full">
-            <div className="flex items-center ">
+            <div className="flex items-center gap-6 ">
               <AlertDownload
                 image_url={handlePopup.image}
                 image_name={handlePopup.description}
                 isButton={true}
               ></AlertDownload>
+              {user?._id === userData?._id && (
+                <div
+                  className="flex items-center border border-gray-300 px-2 py-2"
+                  onClick={handleDeletePost}
+                >
+                  <MdDelete className="text-red-500 text-2xl cursor-pointer" />{' '}
+                  Delete
+                </div>
+              )}
             </div>
             <p className="text-gray-700">
               <span className="font-bold">Likes:</span>{' '}
