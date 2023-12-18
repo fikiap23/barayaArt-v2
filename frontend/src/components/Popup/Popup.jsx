@@ -1,24 +1,26 @@
 /* eslint-disable react/prop-types */
 
 import './Popup.css'
-import { saveAs } from 'file-saver'
 import { Link } from 'react-router-dom'
 
 import { useState } from 'react'
 import { useEffect } from 'react'
 import CreateComment from '../Reactions/CreateComment'
 import { Comment } from '../Reactions/Comment'
-import { useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import userAtom from '../../atoms/userAtom'
 import { AlertDownload } from '../Reactions/AlertDownload'
+import postsAtom from '../../atoms/postsAtom'
 
 const Popup = ({ handlePopup, handleHide }) => {
   const [comments, setComments] = useState('')
   const [loading, setLoading] = useState(false)
   const user = useRecoilValue(userAtom)
-  const downloadImage = (image_url, image_name) => {
-    saveAs(image_url, image_name) // Put your image URL here.
-  }
+  const [isLiking, setIsLiking] = useState(false)
+  const [liked, setLiked] = useState(handlePopup.likes?.includes(user?._id))
+  const [posts, setPosts] = useRecoilState(postsAtom)
+
+  let [likeCount, setLikeCount] = useState(handlePopup?.likes?.length)
 
   // get comment
   useEffect(() => {
@@ -41,6 +43,58 @@ const Popup = ({ handlePopup, handleHide }) => {
     }
     fetchRequest()
   }, [comments, handlePopup?._id])
+
+  const handleLikeAndUnlike = async () => {
+    if (!user)
+      return console.log(
+        'Error',
+        'You must be logged in to like a post',
+        'error'
+      )
+    if (isLiking) return
+    setIsLiking(true)
+    try {
+      const res = await fetch('/api/posts/like/' + handlePopup._id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const data = await res.json()
+      if (data.error) return console.log('Error', data.error, 'error')
+
+      if (!liked) {
+        // add the id of the current user to handlePopup.likes array
+        const updatedPosts = posts.map((p) => {
+          if (p._id === handlePopup._id) {
+            return { ...p, likes: [...p.likes, user._id] }
+          }
+          return p
+        })
+        setPosts(updatedPosts)
+        setLikeCount(likeCount + 1)
+      } else {
+        // remove the id of the current user from handlePopup.likes array
+        const updatedPosts = posts.map((p) => {
+          if (p._id === handlePopup._id) {
+            return {
+              ...p,
+              likes: p.likes.filter((id) => id !== user._id),
+            }
+          }
+          return p
+        })
+        setPosts(updatedPosts)
+        setLikeCount(likeCount - 1)
+      }
+
+      setLiked(!liked)
+    } catch (error) {
+      // console.log('Error', error.message, 'error')
+    } finally {
+      setIsLiking(false)
+    }
+  }
 
   return (
     <div>
@@ -88,7 +142,7 @@ const Popup = ({ handlePopup, handleHide }) => {
             </div>
             <p className="text-gray-700">
               <span className="font-bold">Likes:</span>{' '}
-              {handlePopup?.likes.length}
+              {likeCount ? likeCount : 0}
             </p>
             <p className="text-gray-700">
               <span className="font-bold">Description:</span>{' '}
@@ -101,21 +155,23 @@ const Popup = ({ handlePopup, handleHide }) => {
           </div>
           <div className="flex justify-evenly items-center w-full">
             <div className="flex">
-              <a
-                href="#"
+              <button
+                onClick={handleLikeAndUnlike}
                 className="py-1 pl-1 pr-2 text-gray-600 text-sm rounded hover:bg-gray-100 hover:text-black"
               >
                 <svg
-                  className="inline fill-current"
+                  className={`inline fill-current ${
+                    liked ? 'text-red-500' : ''
+                  }`}
                   width="24"
                   height="24"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path d="M18.884 12.595l.01.011L12 19.5l-6.894-6.894.01-.01A4.875 4.875 0 0112 5.73a4.875 4.875 0 016.884 6.865zM6.431 7.037a3.375 3.375 0 000 4.773L12 17.38l5.569-5.569a3.375 3.375 0 10-4.773-4.773L9.613 10.22l-1.06-1.062 2.371-2.372a3.375 3.375 0 00-4.492.25v.001z"></path>
                 </svg>
-                {handlePopup?.likes.length}
+                {likeCount ? likeCount : 0}
                 <span className="hidden md:inline">&nbsp;reactions</span>
-              </a>
+              </button>
               <a
                 href="#"
                 className="py-1 pl-1 pr-2 text-gray-600 text-sm rounded hover:bg-gray-100 hover:text-black"
