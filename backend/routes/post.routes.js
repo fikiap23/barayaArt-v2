@@ -25,10 +25,10 @@ const router = express.Router()
  *             example: { message: "Get All Posts Success", posts: [] }
  */
 router.get('/', postController.getPost)
-router.put('/like/:id', postController.likeUnlikePost)
+router.put('/like/:id', protectRoute, postController.likeUnlikePost)
 
 // get feed
-router.get('/feed', postController.getFeedPosts)
+router.get('/feed', protectRoute, postController.getFeedPosts)
 
 // search post
 router.get('/search/:query', postController.getPostByQuery)
@@ -89,7 +89,7 @@ router.get('/category/:category', postController.getPostsByCategory)
  *           application/json:
  *             example: { message: "Failed Create Post", detail: "Error message" }
  */
-router.post('/', postController.createPost)
+router.post('/', protectRoute, postController.createPost)
 
 /**
  * @swagger
@@ -121,7 +121,7 @@ router.post('/', postController.createPost)
  *           application/json:
  *             example: { message: "Failed Update Post", detail: "Error message" }
  */
-router.put('/:id', postController.updatePost)
+router.put('/:id', protectRoute, postController.updatePost)
 
 /**
  * @swagger
@@ -148,6 +148,6 @@ router.put('/:id', postController.updatePost)
  *           application/json:
  *             example: { message: "Failed Delete Post", detail: "Error message" }
  */
-router.delete('/:id', postController.deletePost)
+router.delete('/:id', protectRoute, postController.deletePost)
 
 export default router
