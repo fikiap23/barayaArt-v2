@@ -35,7 +35,14 @@ db.once('connected', () => {
 })
 
 const app = express()
-app.use(cors())
+// Enable CORS for all routes with credentials support
+app.use(
+  cors({
+    origin: 'https://baraya-art-v3.vercel.app',
+    credentials: true,
+  })
+)
+
 app.use(express.json({ limit: '50mb' })) // for parsing application/json data in the request body
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded data in the request body
 app.use(cookieParser())
