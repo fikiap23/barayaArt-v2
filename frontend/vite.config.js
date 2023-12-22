@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'https://baraya-art-v2.vercel.app',
         changeOrigin: true,
         secure: false,
       },
