@@ -1,7 +1,9 @@
 import express from 'express'
 import mongoose from 'mongoose'
 import cookieParser from 'cookie-parser'
-// import verifyToken from "./middleware/authorization.js";
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
+import path from 'path'
 import swaggerUi from 'swagger-ui-express'
 import {
   swaggerSpecUser,
@@ -16,6 +18,8 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 
 dotenv.config()
+
+const PORT = process.env.PORT || 3000
 
 const mongoString = process.env.DB_URL
 const db = mongoose.connection
@@ -52,6 +56,16 @@ app.use('/api/users', userRoutes)
 app.use('/api/posts', postRoutes)
 app.use('/api/comments', commentRoutes)
 
-app.listen(3000, () => {
-  console.log(`Server Running at ${3000}`)
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+const rootPath = path.resolve(__dirname, '../')
+
+app.use(express.static(path.join(rootPath, 'frontend/dist')))
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(rootPath, 'frontend/dist/index.html'))
+})
+
+app.listen(PORT, () => {
+  console.log(`Server started at  http://localhost:${PORT}`)
 })
