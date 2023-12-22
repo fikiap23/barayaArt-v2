@@ -38,7 +38,7 @@ const app = express()
 // Enable CORS for all routes with credentials support
 app.use(
   cors({
-    origin: 'https://baraya-art-v3.vercel.app',
+    origin: ['https://baraya-art-v3.vercel.app', 'http://localhost:3000'],
     credentials: true,
   })
 )
