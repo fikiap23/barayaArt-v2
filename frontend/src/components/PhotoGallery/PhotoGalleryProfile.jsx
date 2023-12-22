@@ -11,7 +11,7 @@ import { AlertDownload } from '../Reactions/AlertDownload'
 const PhotoGalleryProfile = ({ photos, handlePopup, userData }) => {
   const [hoveredPhoto, setHoveredPhoto] = useState(null)
 
-  console.log(userData.username)
+  // console.log(userData.username)
 
   return (
     <ResponsiveMasonry columnsCountBreakPoints={{ 0: 1, 576: 2, 768: 3 }}>

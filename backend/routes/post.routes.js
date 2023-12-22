@@ -25,6 +25,7 @@ const router = express.Router()
  *             example: { message: "Get All Posts Success", posts: [] }
  */
 router.get('/', postController.getPost)
+router.put('/like/:id', protectRoute, postController.likeUnlikePost)
 
 // get feed
 router.get('/feed', protectRoute, postController.getFeedPosts)

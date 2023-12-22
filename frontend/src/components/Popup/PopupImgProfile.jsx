@@ -1,21 +1,99 @@
 /* eslint-disable react/prop-types */
 
 import './Popup.css'
-import { saveAs } from 'file-saver'
+
 import { Link } from 'react-router-dom'
 import CreateComment from '../Reactions/CreateComment'
 import { useEffect, useState } from 'react'
-import { useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import userAtom from '../../atoms/userAtom'
 import { Comment } from '../Reactions/Comment'
 import { AlertDownload } from '../Reactions/AlertDownload'
+import postsAtom from '../../atoms/postsAtom'
+import { toast } from 'react-toastify'
+import { MdDelete } from 'react-icons/md'
 
 const PopupImgProfile = ({ handlePopup, handleHide, userData }) => {
   const [comments, setComments] = useState('')
   const [loading, setLoading] = useState(false)
   const user = useRecoilValue(userAtom)
-  const downloadImage = (image_url, image_name) => {
-    saveAs(image_url, image_name) // Put your image URL here.
+  const [isLiking, setIsLiking] = useState(false)
+  const [liked, setLiked] = useState(handlePopup.likes?.includes(user?._id))
+  const [posts, setPosts] = useRecoilState(postsAtom)
+
+  let [likeCount, setLikeCount] = useState(handlePopup?.likes?.length)
+
+  const handleDeletePost = async (e) => {
+    try {
+      e.preventDefault()
+      if (!window.confirm('Are you sure you want to delete this post?')) return
+
+      const res = await fetch(`/api/posts/${handlePopup._id}`, {
+        method: 'DELETE',
+      })
+      const data = await res.json()
+      if (data.error) {
+        // showToast('Error', data.error, 'error')
+        return
+      }
+      toast.success('Post deleted successfully', {
+        position: toast.POSITION.BOTTOM_CENTER,
+      })
+      window.location.reload()
+    } catch (error) {
+      // showToast('Error', error.message, 'error')
+    }
+  }
+  const handleLikeAndUnlike = async () => {
+    if (!user)
+      return console.log(
+        'Error',
+        'You must be logged in to like a post',
+        'error'
+      )
+    if (isLiking) return
+    setIsLiking(true)
+    try {
+      const res = await fetch('/api/posts/like/' + handlePopup._id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const data = await res.json()
+      if (data.error) return console.log('Error', data.error, 'error')
+
+      if (!liked) {
+        // add the id of the current user to handlePopup.likes array
+        const updatedPosts = posts.map((p) => {
+          if (p._id === handlePopup._id) {
+            return { ...p, likes: [...p.likes, user._id] }
+          }
+          return p
+        })
+        setPosts(updatedPosts)
+        setLikeCount(likeCount + 1)
+      } else {
+        // remove the id of the current user from handlePopup.likes array
+        const updatedPosts = posts.map((p) => {
+          if (p._id === handlePopup._id) {
+            return {
+              ...p,
+              likes: p.likes.filter((id) => id !== user._id),
+            }
+          }
+          return p
+        })
+        setPosts(updatedPosts)
+        setLikeCount(likeCount - 1)
+      }
+
+      setLiked(!liked)
+    } catch (error) {
+      // console.log('Error', error.message, 'error')
+    } finally {
+      setIsLiking(false)
+    }
   }
 
   useEffect(() => {
@@ -76,16 +154,25 @@ const PopupImgProfile = ({ handlePopup, handleHide, userData }) => {
           </div>
 
           <div className="additionalInfo p-4 border-t border-gray-300 w-full">
-            <div className="flex items-center ">
+            <div className="flex items-center gap-6 ">
               <AlertDownload
                 image_url={handlePopup.image}
                 image_name={handlePopup.description}
                 isButton={true}
               ></AlertDownload>
+              {user?._id === userData?._id && (
+                <div
+                  className="flex items-center border border-gray-300 px-2 py-2"
+                  onClick={handleDeletePost}
+                >
+                  <MdDelete className="text-red-500 text-2xl cursor-pointer" />{' '}
+                  Delete
+                </div>
+              )}
             </div>
             <p className="text-gray-700">
               <span className="font-bold">Likes:</span>{' '}
-              {handlePopup?.likes.length}
+              {likeCount ? likeCount : 0}
             </p>
             <p className="text-gray-700">
               <span className="font-bold">Description:</span>{' '}
@@ -98,20 +185,23 @@ const PopupImgProfile = ({ handlePopup, handleHide, userData }) => {
           </div>
           <div className="flex justify-evenly items-center w-full">
             <div className="flex">
-              <a
-                href="#"
+              <button
+                onClick={() => handleLikeAndUnlike()}
                 className="py-1 pl-1 pr-2 text-gray-600 text-sm rounded hover:bg-gray-100 hover:text-black"
               >
                 <svg
-                  className="inline fill-current"
+                  className={`inline fill-current ${
+                    liked ? 'text-red-500' : ''
+                  }`}
                   width="24"
                   height="24"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path d="M18.884 12.595l.01.011L12 19.5l-6.894-6.894.01-.01A4.875 4.875 0 0112 5.73a4.875 4.875 0 016.884 6.865zM6.431 7.037a3.375 3.375 0 000 4.773L12 17.38l5.569-5.569a3.375 3.375 0 10-4.773-4.773L9.613 10.22l-1.06-1.062 2.371-2.372a3.375 3.375 0 00-4.492.25v.001z"></path>
                 </svg>
-                195<span className="hidden md:inline">&nbsp;reactions</span>
-              </a>
+                {likeCount ? likeCount : 0}
+                <span className="hidden md:inline">&nbsp;reactions</span>
+              </button>
               <a
                 href="#"
                 className="py-1 pl-1 pr-2 text-gray-600 text-sm rounded hover:bg-gray-100 hover:text-black"
@@ -124,7 +214,8 @@ const PopupImgProfile = ({ handlePopup, handleHide, userData }) => {
                 >
                   <path d="M10.5 5h3a6 6 0 110 12v2.625c-3.75-1.5-9-3.75-9-8.625a6 6 0 016-6zM12 15.5h1.5a4.501 4.501 0 001.722-8.657A4.5 4.5 0 0013.5 6.5h-3A4.5 4.5 0 006 11c0 2.707 1.846 4.475 6 6.36V15.5z"></path>
                 </svg>
-                20<span className="hidden md:inline">&nbsp;comments</span>
+                {comments?.length}
+                <span className="hidden md:inline">&nbsp;comments</span>
               </a>
             </div>
             <div className="flex items-center">
