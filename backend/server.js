@@ -43,6 +43,13 @@ app.use(
   })
 )
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Credentials', true)
+  res.header('Access-Control-Allow-Origin', req.headers.origin)
+  // ... (headers lain yang mungkin diperlukan)
+  next()
+})
+
 app.use(express.json({ limit: '50mb' })) // for parsing application/json data in the request body
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded data in the request body
 app.use(cookieParser())
