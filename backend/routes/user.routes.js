@@ -24,7 +24,7 @@ const router = express.Router()
  *           application/json:
  *             example: { message: "Get All Users Success", users: [] }
  */
-router.get('/', protectRoute, userController.getUser)
+router.get('/', userController.getUser)
 
 /**
  * @swagger
@@ -138,7 +138,7 @@ router.post('/register', userController.registerUser)
  *           application/json:
  *             example: { message: "Failed Update User", detail: "Error message" }
  */
-router.put('/:id', protectRoute, userController.updateUser)
+router.put('/:id', userController.updateUser)
 
 /**
  * @swagger
@@ -169,6 +169,6 @@ router.put('/:id', protectRoute, userController.updateUser)
 
 router.post('/logout', userController.logoutUser)
 
-router.post('/follow/:id', protectRoute, userController.followUnFollowUser) // Toggle state(follow/unfollow)
+router.post('/follow/:id', userController.followUnFollowUser) // Toggle state(follow/unfollow)
 
 export default router
